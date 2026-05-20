@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analyse läuft - Laminimas Echtheitscheck</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'serif'],
+            sans: ['Montserrat', 'sans-serif'],
+          },
+          colors: {
+            luxury: {
+              gold: '#C5A880',
+              goldDark: '#A88B62',
+              cream: '#FDFBF7',
+              beige: '#F5EFEB',
+              charcoal: '#1A1A1A'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="font-sans antialiased bg-luxury-cream text-luxury-charcoal flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-stone-200 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div class="flex flex-col">
+        <span class="font-serif text-2xl tracking-[0.3em] font-medium text-luxury-charcoal">L A M I N I M A S</span>
+        <span class="text-[9px] tracking-[0.4em] text-luxury-gold uppercase -mt-1 font-semibold">Echtheitscheck</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Progress Steps Indicator -->
+  <div class="max-w-xl mx-auto w-full px-4 pt-10">
+    <div class="flex items-center justify-between text-xs font-semibold tracking-widest text-stone-400">
+      <div class="flex items-center text-stone-500 space-x-2">
+        <span class="w-6 h-6 rounded-full border border-stone-300 flex items-center justify-center font-serif">✓</span>
+        <span>ZAHLUNG</span>
+      </div>
+      <div class="w-16 h-px bg-stone-300"></div>
+      <div class="flex items-center text-stone-500 space-x-2">
+        <span class="w-6 h-6 rounded-full border border-stone-300 flex items-center justify-center font-serif">✓</span>
+        <span>UPLOADS</span>
+      </div>
+      <div class="w-16 h-px bg-stone-300"></div>
+      <div class="flex items-center text-luxury-gold space-x-2">
+        <span class="w-6 h-6 rounded-full border border-luxury-gold flex items-center justify-center font-serif">3</span>
+        <span>BERICHT</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Core Card -->
+  <main class="flex-grow flex items-center justify-center py-12 px-4">
+    <div class="max-w-md w-full bg-white border border-stone-200 p-10 text-center shadow-xl space-y-8">
+      
+      <!-- Elegant Spinner Ring -->
+      <div class="relative w-28 h-28 mx-auto">
+        <div class="absolute inset-0 border-4 border-stone-100 rounded-full"></div>
+        <div class="absolute inset-0 border-4 border-luxury-gold border-t-transparent rounded-full animate-spin"></div>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <svg class="w-8 h-8 text-luxury-gold animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364.364l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+        </div>
+      </div>
+
+      <!-- Live-Progress Message -->
+      <div class="space-y-3">
+        <h3 class="font-serif text-2xl text-luxury-charcoal tracking-wide" id="main-status-title">Analysiere Bilder...</h3>
+        <p class="text-xs text-stone-500 font-light leading-relaxed max-w-xs mx-auto" id="sub-status-desc">
+          Die Bilder werden sicher auf unsere Server übertragen und für die KI-Vorprüfung aufbereitet.
+        </p>
+      </div>
+
+      <!-- Interactive Checklist Steps -->
+      <div class="text-left max-w-xs mx-auto space-y-2 border-t border-stone-100 pt-6">
+        <div class="flex items-center space-x-3 text-xs" id="step-0">
+          <span class="w-4 h-4 rounded-full border border-stone-200 flex items-center justify-center text-[9px] font-bold text-stone-300">1</span>
+          <span class="text-stone-400">Bilder sicher übertragen</span>
+        </div>
+        <div class="flex items-center space-x-3 text-xs" id="step-1">
+          <span class="w-4 h-4 rounded-full border border-stone-200 flex items-center justify-center text-[9px] font-bold text-stone-300">2</span>
+          <span class="text-stone-400 font-light">Echtheitsmerkmale detektieren</span>
+        </div>
+        <div class="flex items-center space-x-3 text-xs" id="step-2">
+          <span class="w-4 h-4 rounded-full border border-stone-200 flex items-center justify-center text-[9px] font-bold text-stone-300">3</span>
+          <span class="text-stone-400 font-light">Seriennummer & Prägung prüfen</span>
+        </div>
+        <div class="flex items-center space-x-3 text-xs" id="step-3">
+          <span class="w-4 h-4 rounded-full border border-stone-200 flex items-center justify-center text-[9px] font-bold text-stone-300">4</span>
+          <span class="text-stone-400 font-light">Risiko-Score berechnen</span>
+        </div>
+        <div class="flex items-center space-x-3 text-xs" id="step-4">
+          <span class="w-4 h-4 rounded-full border border-stone-200 flex items-center justify-center text-[9px] font-bold text-stone-300">5</span>
+          <span class="text-stone-400 font-light">Berichts-PDF generieren</span>
+        </div>
+      </div>
+
+      <div class="text-[10px] text-stone-400 font-light">
+        Die Analyse dauert im Schnitt etwa 2 bis 3 Minuten.
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-white border-t border-stone-200 py-6 text-center text-xs text-stone-400">
+    <p>&copy; 2026 Laminimas.com. Alle Rechte vorbehalten.</p>
+  </footer>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const analysisId = urlParams.get('id');
+
+    if (!analysisId) {
+      alert('Keine Analyse-ID angegeben. Zurück zur Startseite.');
+      window.location.href = '/index.html';
+    }
+
+    // Step descriptions to rotate
+    const STEPS_DATA = [
+      {
+        title: "Übertragung abgeschlossen",
+        desc: "Ihre Fotos wurden erfolgreich verschlüsselt hochgeladen. Wir initialisieren die Analyse.",
+        activeStep: 0
+      },
+      {
+        title: "Prüfe Bildqualitäten...",
+        desc: "Wir validieren die Bildauflösung und Ausleuchtung der hochgeladenen Nähte und Logos.",
+        activeStep: 1
+      },
+      {
+        title: "Echtheitsanalyse läuft...",
+        desc: "Unsere Vision-KI analysiert die Ledernarbung, Kantenbeschichtungen und Monogramm-Symmetrien.",
+        activeStep: 2
+      },
+      {
+        title: "Details-Prüfung...",
+        desc: "Die Heißprägung, Seriennummern-Schriftart und Logo-Proportionen werden exakt analysiert.",
+        activeStep: 3
+      },
+      {
+        title: "Risiko-Kalkulation...",
+        desc: "Wir fassen die Einzelmerkmale zusammen und berechnen den mathematischen Risiko-Score.",
+        activeStep: 4
+      },
+      {
+        title: "Report wird finalisiert...",
+        desc: "Der PDF-Echtheitsbericht wird mit allen Empfehlungen zusammengestellt. Fast fertig!",
+        activeStep: 4
+      }
+    ];
+
+    let currentStepIndex = 0;
+
+    // Rotate messages every 4.5 seconds
+    const intervalId = setInterval(() => {
+      if (currentStepIndex < STEPS_DATA.length - 1) {
+        currentStepIndex++;
+        updateUI();
+      }
+    }, 4500);
+
+    function updateUI() {
+      const step = STEPS_DATA[currentStepIndex];
+      document.getElementById('main-status-title').innerText = step.title;
+      document.getElementById('sub-status-desc').innerText = step.desc;
+
+      // Update checkmarks
+      for (let i = 0; i <= 4; i++) {
+        const stepEl = document.getElementById(`step-${i}`);
+        if (stepEl) {
+          if (i < step.activeStep) {
+            // Completed
+            stepEl.innerHTML = `
+              <span class="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[8px] font-bold">✓</span>
+              <span class="text-stone-700 font-medium">${stepEl.children[1].innerText}</span>
+            `;
+          } else if (i === step.activeStep) {
+            // Current Active
+            stepEl.innerHTML = `
+              <span class="w-4 h-4 rounded-full border border-luxury-gold bg-amber-50 text-luxury-gold flex items-center justify-center text-[9px] font-bold animate-pulse">●</span>
+              <span class="text-luxury-charcoal font-semibold">${stepEl.children[1].innerText}</span>
+            `;
+          }
+        }
+      }
+    }
+
+    // Set initial UI
+    updateUI();
+
+    // Poll the status every 2.5 seconds
+    async function checkStatus() {
+      try {
+        const response = await fetch(`/api/analysis?id=${analysisId}`);
+        const data = await response.json();
+
+        if (data.status === 'Abgeschlossen' || data.status === 'Manuelle Prüfung nötig') {
+          clearInterval(intervalId);
+          document.getElementById('main-status-title').innerText = "Analyse fertiggestellt!";
+          document.getElementById('sub-status-desc').innerText = "Ihr Report wurde erfolgreich generiert. Sie werden weitergeleitet...";
+          
+          setTimeout(() => {
+            window.location.href = `/ergebnis.html?id=${analysisId}`;
+          }, 1000);
+        }
+      } catch (err) {
+        console.error('Error polling status:', err);
+      }
+    }
+
+    const pollInterval = setInterval(checkStatus, 2500);
+  </script>
+</body>
+</html>

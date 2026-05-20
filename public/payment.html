@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sichere Zahlung - Laminimas Echtheitscheck</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'serif'],
+            sans: ['Montserrat', 'sans-serif'],
+          },
+          colors: {
+            luxury: {
+              gold: '#C5A880',
+              goldDark: '#A88B62',
+              cream: '#FDFBF7',
+              beige: '#F5EFEB',
+              charcoal: '#1A1A1A'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="font-sans antialiased bg-luxury-cream text-luxury-charcoal flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-stone-200 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div class="flex flex-col">
+        <span class="font-serif text-2xl tracking-[0.3em] font-medium text-luxury-charcoal">L A M I N I M A S</span>
+        <span class="text-[9px] tracking-[0.4em] text-luxury-gold uppercase -mt-1 font-semibold">Echtheitscheck</span>
+      </div>
+      <div class="flex items-center space-x-2 text-xs text-stone-500 font-medium">
+        <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+        <span>Sichere Bezahlung</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Progress Steps Indicator -->
+  <div class="max-w-xl mx-auto w-full px-4 pt-10">
+    <div class="flex items-center justify-between text-xs font-semibold tracking-widest text-stone-400">
+      <div class="flex items-center text-luxury-gold space-x-2">
+        <span class="w-6 h-6 rounded-full border border-luxury-gold flex items-center justify-center font-serif">1</span>
+        <span>ZAHLUNG</span>
+      </div>
+      <div class="w-16 h-px bg-stone-300"></div>
+      <div class="flex items-center space-x-2">
+        <span class="w-6 h-6 rounded-full border border-stone-300 flex items-center justify-center font-serif">2</span>
+        <span>UPLOADS</span>
+      </div>
+      <div class="w-16 h-px bg-stone-300"></div>
+      <div class="flex items-center space-x-2">
+        <span class="w-6 h-6 rounded-full border border-stone-300 flex items-center justify-center font-serif">3</span>
+        <span>BERICHT</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl w-full grid grid-cols-1 md:grid-cols-12 gap-8 bg-white border border-stone-200 shadow-xl">
+      
+      <!-- Checkout Info (Left) -->
+      <div class="md:col-span-5 bg-stone-50 p-8 border-b md:border-b-0 md:border-r border-stone-200 flex flex-col justify-between">
+        <div>
+          <span class="text-[9px] uppercase tracking-widest font-bold text-stone-400 block mb-2">Ihre Bestellung</span>
+          <h2 class="font-serif text-xl font-bold text-luxury-charcoal mb-4">Echtheitscheck</h2>
+          
+          <div class="space-y-3 text-xs border-b border-stone-200 pb-4 mb-4">
+            <div class="flex justify-between">
+              <span class="text-stone-500">Marke:</span>
+              <span class="font-semibold" id="checkout-brand">Laden...</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-stone-500">Modell:</span>
+              <span class="font-semibold" id="checkout-model">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-stone-500">Kunde:</span>
+              <span class="font-semibold text-stone-600 truncate max-w-[120px]" id="checkout-email">-</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex justify-between items-baseline">
+            <span class="text-xs text-stone-500">Summe:</span>
+            <span class="font-serif text-2xl font-bold text-luxury-charcoal">14,90 €</span>
+          </div>
+          <span class="text-[9px] text-stone-400 block">inkl. 19% gesetzl. MwSt.</span>
+        </div>
+      </div>
+
+      <!-- Payment Forms (Right) -->
+      <div class="md:col-span-7 p-8 space-y-6">
+        <h3 class="font-serif text-lg text-luxury-charcoal border-b border-stone-100 pb-2">Zahlungsart wählen</h3>
+
+        <!-- Credit Card Fields -->
+        <div class="space-y-4">
+          <div class="flex border border-luxury-gold p-3 items-center justify-between bg-amber-50/20">
+            <div class="flex items-center space-x-3">
+              <input type="radio" checked id="pay-card" name="pay-method" class="text-luxury-gold focus:ring-luxury-gold h-4 w-4">
+              <label for="pay-card" class="text-xs font-semibold tracking-wider">Kreditkarte</label>
+            </div>
+            <div class="flex space-x-1">
+              <span class="text-[9px] border border-stone-300 px-1 font-bold text-stone-400">VISA</span>
+              <span class="text-[9px] border border-stone-300 px-1 font-bold text-stone-400 font-serif">MC</span>
+            </div>
+          </div>
+
+          <div class="space-y-3 p-4 border border-stone-200 bg-stone-50/50">
+            <div>
+              <label class="block text-[9px] uppercase tracking-widest font-bold text-stone-500 mb-1">Kartennummer</label>
+              <input type="text" placeholder="4242 •••• •••• 4242" value="4242 4242 4242 4242" class="w-full border border-stone-200 px-3 py-2 text-xs focus:outline-none focus:border-luxury-gold bg-white">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[9px] uppercase tracking-widest font-bold text-stone-500 mb-1">Gültig bis</label>
+                <input type="text" placeholder="MM/JJ" value="12/28" class="w-full border border-stone-200 px-3 py-2 text-xs focus:outline-none focus:border-luxury-gold bg-white">
+              </div>
+              <div>
+                <label class="block text-[9px] uppercase tracking-widest font-bold text-stone-500 mb-1">CVC Code</label>
+                <input type="text" placeholder="123" value="123" class="w-full border border-stone-200 px-3 py-2 text-xs focus:outline-none focus:border-luxury-gold bg-white">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="simulatePayment()" id="pay-button" class="w-full bg-luxury-charcoal text-white hover:bg-luxury-gold hover:text-luxury-charcoal transition-all duration-300 text-xs tracking-widest uppercase font-bold py-4 rounded-none shadow-md">
+          Sicher Bezahlen (14,90 €)
+        </button>
+
+        <div class="text-[10px] text-stone-400 text-center leading-relaxed font-light">
+          Durch Klicken auf "Sicher Bezahlen" stimmen Sie unseren AGB und der sofortigen Ausführung des digitalen Services zu.
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-stone-200 py-6 text-center text-xs text-stone-400">
+    <p>&copy; 2026 Laminimas.com. Alle Verbindungen sind mit modernster 256-Bit SSL-Verschlüsselung gesichert.</p>
+  </footer>
+
+  <script>
+    // Extract token from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    if (!token) {
+      alert('Zahlungstoken fehlt. Sie werden zur Startseite weitergeleitet.');
+      window.location.href = '/index.html';
+    }
+
+    // Fetch brief details about the token to make UI feel very custom
+    async function loadTokenDetails() {
+      try {
+        const res = await fetch(`/api/verify-token?token=${token}`);
+        const data = await res.json();
+        
+        // Note: verify-token returns valid: false if unpaid, but we also get the record if we query it, or we handle it.
+        // Let's inspect what's returned. To display details, the server verified it or returned metadata.
+        if (data.error && data.error.includes('noch nicht abgeschlossen')) {
+          // This is expected! We are here to pay. Let's fetch directly or use mock from URL / session if we want.
+          // Wait, verify-token returns valid: false because unpaid. Let's make sure we show fallback brand if we don't have it.
+        }
+        
+        // Since we want details, let's look at what the backend did. We can request a token query.
+        // Let's check how the verify-token endpoint was implemented: it returns valid: false if unpaid. 
+        // Let's fetch /api/analysis status using token if we want or just keep defaults.
+        // Actually, we can get token details from our endpoint, or just write a generic beautiful brand name since we stored it.
+        // Let's call /api/analysis if we can query it, or simply use session storage as a fast helper.
+        const storedBrand = sessionStorage.getItem('laminimas_brand') || 'Designer Tasche';
+        const storedModel = sessionStorage.getItem('laminimas_model') || 'Klassisch';
+        const storedEmail = sessionStorage.getItem('laminimas_email') || 'Ihre E-Mail';
+        
+        document.getElementById('checkout-brand').innerText = storedBrand;
+        document.getElementById('checkout-model').innerText = storedModel || 'Kein Modell angegeben';
+        document.getElementById('checkout-email').innerText = storedEmail;
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    loadTokenDetails();
+
+    async function simulatePayment() {
+      const payButton = document.getElementById('pay-button');
+      payButton.disabled = true;
+      payButton.innerText = "Zahlung wird verarbeitet...";
+
+      try {
+        const response = await fetch('/api/confirm-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: token })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          payButton.innerText = "Zahlung erfolgreich! Weiterleitung...";
+          setTimeout(() => {
+            window.location.href = data.redirectUrl;
+          }, 1500);
+        } else {
+          alert('Fehler bei der Zahlung: ' + data.error);
+          payButton.disabled = false;
+          payButton.innerText = "Sicher Bezahlen (14,90 €)";
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Netzwerkfehler. Bitte versuchen Sie es erneut.');
+        payButton.disabled = false;
+        payButton.innerText = "Sicher Bezahlen (14,90 €)";
+      }
+    }
+  </script>
+</body>
+</html>

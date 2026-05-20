@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analyseergebnis - Laminimas Echtheitscheck</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <!-- Load jsPDF from CDN for client side PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'serif'],
+            sans: ['Montserrat', 'sans-serif'],
+          },
+          colors: {
+            luxury: {
+              gold: '#C5A880',
+              goldDark: '#A88B62',
+              cream: '#FDFBF7',
+              beige: '#F5EFEB',
+              charcoal: '#1A1A1A',
+              bronze: '#8E7355'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #FDFBF7;
+    }
+    @media print {
+      body {
+        background-color: #ffffff;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-border {
+        border: 1px solid #e5e7eb !important;
+      }
+    }
+  </style>
+</head>
+<body class="font-sans antialiased text-luxury-charcoal flex flex-col min-h-screen">
+
+  <!-- Header (Hidden on print) -->
+  <header class="border-b border-stone-200 bg-white no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div class="flex flex-col">
+        <span class="font-serif text-2xl tracking-[0.3em] font-medium text-luxury-charcoal">L A M I N I M A S</span>
+        <span class="text-[9px] tracking-[0.4em] text-luxury-gold uppercase -mt-1 font-semibold">Echtheitscheck</span>
+      </div>
+      <div>
+        <a href="/index.html" class="text-xs tracking-widest uppercase font-semibold text-stone-500 hover:text-luxury-gold transition">
+          ← Startseite
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Result Report -->
+  <main class="flex-grow py-12 px-4 sm:px-6 lg:px-8">
+    <div id="report-container" class="max-w-4xl mx-auto bg-white border border-stone-200 p-8 sm:p-12 shadow-xl print-border relative">
+      
+      <!-- Luxury Gold Accent Band -->
+      <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-luxury-gold to-luxury-goldDark"></div>
+
+      <!-- Report Header -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-stone-200 pb-8 mb-8">
+        <div>
+          <span class="text-[10px] uppercase tracking-[0.2em] font-bold text-luxury-gold block mb-1">KI-Basierter Analysebericht</span>
+          <h1 class="font-serif text-3xl text-luxury-charcoal" id="report-id-heading">Ersteinschätzung</h1>
+          <p class="text-[10px] text-stone-400 mt-1" id="report-date">Erstellt am: --.--.----</p>
+        </div>
+        <div class="mt-4 sm:mt-0 text-left sm:text-right">
+          <span class="font-serif text-xl tracking-widest font-semibold text-luxury-charcoal block">LAMINIMAS</span>
+          <span class="text-[9px] tracking-wider text-stone-500 uppercase font-light">Digital Luxury Services</span>
+        </div>
+      </div>
+
+      <!-- Overview Box -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-10 items-center">
+        
+        <!-- Result and Score Left -->
+        <div class="md:col-span-6 space-y-4">
+          <div>
+            <span class="text-[9px] uppercase tracking-widest font-bold text-stone-400 block mb-1">Gegenstand der Vorprüfung</span>
+            <div class="flex items-baseline space-x-2">
+              <span class="font-serif text-2xl font-bold" id="brand-name">Marke</span>
+              <span class="text-stone-500 text-sm font-light" id="model-name">Modell</span>
+            </div>
+          </div>
+
+          <!-- Overall Result Badge -->
+          <div>
+            <span class="text-[9px] uppercase tracking-widest font-bold text-stone-400 block mb-1.5">Ergebnis-Status</span>
+            <span id="result-badge" class="inline-block px-4 py-2 text-xs uppercase tracking-widest font-bold border rounded-none">
+              In Prüfung...
+            </span>
+          </div>
+
+          <!-- Risk Score Bar -->
+          <div class="space-y-1.5 pt-2">
+            <div class="flex justify-between text-[10px] uppercase tracking-wider font-bold">
+              <span class="text-stone-500">Risiko-Score</span>
+              <span class="text-luxury-charcoal" id="risk-score-text">0 / 100</span>
+            </div>
+            <!-- Progress track -->
+            <div class="w-full bg-stone-100 h-2.5 rounded-none relative overflow-hidden">
+              <div id="risk-score-bar" class="h-full bg-stone-300 transition-all duration-1000" style="width: 0%"></div>
+            </div>
+            <p class="text-[9px] text-stone-400 font-light italic leading-normal">
+              * Ein niedriger Score (0-30) steht für sehr geringes Fälschungsrisiko. Ein hoher Score (70-100) deutet auf erhebliche Abweichungen hin.
+            </p>
+          </div>
+        </div>
+
+        <!-- Summary Right -->
+        <div class="md:col-span-6 bg-stone-50 p-6 border border-stone-200/60 h-full flex flex-col justify-center">
+          <span class="text-[9px] uppercase tracking-widest font-bold text-stone-400 block mb-2">Zusammenfassung der Analyse</span>
+          <p class="text-xs text-stone-600 leading-relaxed font-light italic" id="report-summary">
+            Die Analyse wird geladen...
+          </p>
+        </div>
+      </div>
+
+      <!-- Detailed Findings (Lists) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+        
+        <!-- Positive Signs -->
+        <div class="border border-emerald-100 p-6 bg-emerald-50/10 space-y-4">
+          <div class="flex items-center space-x-2 border-b border-emerald-100 pb-2 text-emerald-800">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <h3 class="font-serif text-sm font-semibold tracking-wider">Originalkonforme Merkmale</h3>
+          </div>
+          <ul class="text-xs text-stone-600 space-y-2.5 font-light list-inside list-disc" id="positive-list">
+            <!-- Dynamically populated -->
+          </ul>
+        </div>
+
+        <!-- Warning Signs / Anomalies -->
+        <div class="border border-red-100 p-6 bg-red-50/10 space-y-4">
+          <div class="flex items-center space-x-2 border-b border-red-100 pb-2 text-red-800">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <h3 class="font-serif text-sm font-semibold tracking-wider">Auffälligkeiten / Abweichungen</h3>
+          </div>
+          <ul class="text-xs text-stone-600 space-y-2.5 font-light list-inside list-disc" id="warning-list">
+            <!-- Dynamically populated -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom Meta Block -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-stone-200/80 pt-8 mb-8">
+        <!-- Missing images & Recommendation -->
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-serif text-xs font-semibold uppercase tracking-widest text-luxury-charcoal mb-2">Empfehlungen</h4>
+            <div class="bg-amber-50/30 border border-amber-200 p-4 text-xs font-light leading-relaxed text-luxury-bronze" id="recommendation-text">
+              Lade Empfehlungen...
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h4 class="font-serif text-xs font-semibold uppercase tracking-widest text-luxury-charcoal">Fehlende Bildperspektiven</h4>
+          <p class="text-[11px] text-stone-500 font-light leading-relaxed">
+            Für eine noch fundiertere Einschätzung sollten folgende Bereiche mit schärferen Bildern eingereicht werden:
+          </p>
+          <ul class="text-xs text-stone-600 space-y-1 font-medium list-inside list-disc" id="missing-list">
+            <!-- Dynamic -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- Legal Disclaimer -->
+      <div class="bg-stone-50 p-6 border border-stone-200 text-center space-y-2">
+        <span class="text-[9px] uppercase tracking-widest font-bold text-stone-400 block">Wichtiger Rechtlicher Hinweis</span>
+        <p class="text-[10px] text-stone-500 leading-relaxed font-light" id="disclaimer-text">
+          Diese Analyse ist eine KI-basierte Ersteinschätzung und ersetzt keine professionelle physische Prüfung oder ein offizielles Echtheitszertifikat der jeweiligen Marke.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Print / Export Tools (No Print) -->
+    <div class="max-w-4xl mx-auto mt-8 flex flex-col sm:flex-row justify-center items-center gap-4 no-print">
+      <button onclick="window.print()" class="w-full sm:w-auto border border-stone-300 bg-white text-luxury-charcoal hover:bg-stone-100 transition duration-300 text-xs tracking-widest uppercase font-bold px-8 py-4 flex items-center justify-center space-x-2 shadow-sm">
+        <svg class="w-4 h-4 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+        <span>Report drucken / PDF-Druck</span>
+      </button>
+
+      <button onclick="generatePDF()" class="w-full sm:w-auto bg-luxury-charcoal text-white hover:bg-luxury-gold hover:text-luxury-charcoal transition-all duration-300 text-xs tracking-widest uppercase font-bold px-8 py-4 flex items-center justify-center space-x-2 shadow-md">
+        <svg class="w-4 h-4 text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+        <span>PDF herunterladen (Digital)</span>
+      </button>
+    </div>
+  </main>
+
+  <!-- Footer (No Print) -->
+  <footer class="bg-white border-t border-stone-200 py-6 text-center text-xs text-stone-400 no-print">
+    <p>&copy; 2026 Laminimas.com. Alle Rechte vorbehalten.</p>
+  </footer>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+
+    if (!id) {
+      alert('Ungültige Anfrage-ID. Sie werden zur Startseite weitergeleitet.');
+      window.location.href = '/index.html';
+    }
+
+    let rawData = null;
+
+    async function loadReport() {
+      try {
+        const response = await fetch(`/api/analysis?id=${id}`);
+        const data = await response.json();
+        rawData = data;
+
+        if (response.status !== 200 || data.error) {
+          alert('Bericht konnte nicht geladen werden.');
+          window.location.href = '/index.html';
+          return;
+        }
+
+        // Fill brand / model
+        document.getElementById('brand-name').innerText = data.brand;
+        document.getElementById('model-name').innerText = data.model ? `(${data.model})` : '';
+        document.getElementById('report-id-heading').innerText = `Ersteinschätzung #${data.id}`;
+        
+        // Date formatting
+        const rawDate = new Date(data.createdAt);
+        const formattedDate = rawDate.toLocaleDateString('de-DE', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }) + " Uhr";
+        document.getElementById('report-date').innerText = `Erstellt am: ${formattedDate}`;
+
+        // Get AI result JSON fields
+        const r = data.result || {};
+        
+        // Setup Result Badge
+        const badge = document.getElementById('result-badge');
+        badge.innerText = r.result || 'In Prüfung';
+        
+        if (r.result === 'wahrscheinlich authentisch') {
+          badge.className = "inline-block px-4 py-2 text-xs uppercase tracking-widest font-bold border rounded-none bg-emerald-50 text-emerald-800 border-emerald-200";
+        } else if (r.result === 'unklar') {
+          badge.className = "inline-block px-4 py-2 text-xs uppercase tracking-widest font-bold border rounded-none bg-amber-50 text-amber-800 border-amber-200";
+        } else {
+          badge.className = "inline-block px-4 py-2 text-xs uppercase tracking-widest font-bold border rounded-none bg-red-50 text-red-800 border-red-200";
+        }
+
+        // Setup Risk Score
+        const score = r.risk_score !== undefined ? r.risk_score : 50;
+        document.getElementById('risk-score-text').innerText = `${score} / 100`;
+        const bar = document.getElementById('risk-score-bar');
+        bar.style.width = `${score}%`;
+
+        if (score < 35) {
+          bar.className = "h-full bg-emerald-500 transition-all duration-1000";
+        } else if (score < 70) {
+          bar.className = "h-full bg-amber-500 transition-all duration-1000";
+        } else {
+          bar.className = "h-full bg-red-500 transition-all duration-1000";
+        }
+
+        // Summary
+        document.getElementById('report-summary').innerText = r.summary || 'Keine Zusammenfassung vorhanden.';
+
+        // Lists
+        populateList('positive-list', r.positive_signs, "Keine markanten originalgetreuen Merkmale explizit aufgeführt.");
+        populateList('warning-list', r.warning_signs, "Keine auffälligen Unstimmigkeiten visuell erkannt.");
+        populateList('missing-list', r.missing_images, "Keine fehlenden Bilder vermerkt.");
+
+        // Recommendation & Disclaimer
+        document.getElementById('recommendation-text').innerText = r.recommendation || 'Keine Empfehlung vorhanden.';
+        if (r.disclaimer) {
+          document.getElementById('disclaimer-text').innerText = r.disclaimer;
+        }
+
+      } catch (err) {
+        console.error('Error loading report:', err);
+      }
+    }
+
+    function populateList(id, items, fallbackText) {
+      const el = document.getElementById(id);
+      el.innerHTML = '';
+      if (items && items.length > 0) {
+        items.forEach(it => {
+          const li = document.createElement('li');
+          li.className = "leading-relaxed";
+          li.innerText = it;
+          el.appendChild(li);
+        });
+      } else {
+        const li = document.createElement('li');
+        li.className = "text-stone-400 italic list-none";
+        li.innerText = fallbackText;
+        el.appendChild(li);
+      }
+    }
+
+    loadReport();
+
+    // Elegant programmatic PDF generation via jsPDF!
+    function generatePDF() {
+      if (!rawData) return;
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({
+        orientation: 'p',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const r = rawData.result || {};
+
+      // PDF styling settings
+      doc.setFillColor(26, 26, 26); // charcoal
+      doc.rect(0, 0, 210, 15, 'F'); // Top bar
+      doc.setFillColor(197, 168, 128); // gold
+      doc.rect(0, 15, 210, 2, 'F'); // Gold thin line
+
+      // Header Brand
+      doc.setTextColor(26, 26, 26);
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(22);
+      doc.text("L A M I N I M A S", 20, 35);
+      
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(197, 168, 128);
+      doc.text("ECHTHEITSCHECK • DIGITAL LUXURY SERVICES", 20, 40);
+
+      // Report Info
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.setTextColor(26, 26, 26);
+      doc.text(`ANALYSEBERICHT #${rawData.id}`, 120, 35);
+
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(120, 120, 120);
+      const rawDate = new Date(rawData.createdAt);
+      doc.text(`Erstellt: ${rawDate.toLocaleDateString('de-DE')} ${rawDate.toLocaleTimeString('de-DE')}`, 120, 40);
+
+      // Horizontal separator line
+      doc.setDrawColor(220, 220, 220);
+      doc.line(20, 46, 190, 46);
+
+      // Details Block
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(120, 120, 120);
+      doc.text("GEGENSTAND DER VORPRÜFUNG:", 20, 54);
+
+      doc.setTextColor(26, 26, 26);
+      doc.setFontSize(12);
+      doc.text(`Marke: ${rawData.brand}`, 20, 60);
+      doc.text(`Modell: ${rawData.model || 'Klassisch / Keine Angabe'}`, 20, 65);
+
+      // Result Badge Box
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(120, 120, 120);
+      doc.text("ERGEBNIS-STATUS:", 120, 54);
+
+      const statusText = (r.result || 'In Prüfung').toUpperCase();
+      doc.setFontSize(11);
+      if (r.result === 'wahrscheinlich authentisch') {
+        doc.setTextColor(16, 124, 65); // emerald green
+      } else if (r.result === 'unklar') {
+        doc.setTextColor(180, 110, 0); // orange
+      } else {
+        doc.setTextColor(220, 50, 50); // red
+      }
+      doc.text(statusText, 120, 60);
+
+      // Risk score
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(120, 120, 120);
+      doc.text(`Risiko-Score: ${r.risk_score || 0} / 100`, 120, 65);
+
+      doc.setDrawColor(220, 220, 220);
+      doc.line(20, 72, 190, 72);
+
+      // Summary
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(26, 26, 26);
+      doc.text("ZUSAMMENFASSUNG DER ANALYSE:", 20, 80);
+
+      doc.setFont('Helvetica', 'italic');
+      doc.setFontSize(9);
+      doc.setTextColor(80, 80, 80);
+      
+      // Wrap summary text
+      const summaryText = r.summary || 'Keine Zusammenfassung vorhanden.';
+      const splitSummary = doc.splitTextToSize(summaryText, 170);
+      doc.text(splitSummary, 20, 86);
+
+      let currentY = 86 + (splitSummary.length * 4.5) + 6;
+
+      doc.setDrawColor(220, 220, 220);
+      doc.line(20, currentY, 190, currentY);
+      currentY += 8;
+
+      // Positive and Warning Signs
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(16, 124, 65);
+      doc.text("Positive Merkmale (originalkonform):", 20, currentY);
+
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(80, 80, 80);
+      currentY += 5;
+      
+      if (r.positive_signs && r.positive_signs.length > 0) {
+        r.positive_signs.forEach(s => {
+          doc.text(`• ${s}`, 22, currentY);
+          currentY += 4.5;
+        });
+      } else {
+        doc.text("Keine besonderen Merkmale aufgeführt.", 22, currentY);
+        currentY += 4.5;
+      }
+      currentY += 4;
+
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(220, 50, 50);
+      doc.text("Auffälligkeiten / Abweichungen:", 20, currentY);
+
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(80, 80, 80);
+      currentY += 5;
+
+      if (r.warning_signs && r.warning_signs.length > 0) {
+        r.warning_signs.forEach(s => {
+          doc.text(`• ${s}`, 22, currentY);
+          currentY += 4.5;
+        });
+      } else {
+        doc.text("Keine gravierenden Abweichungen visuell erkannt.", 22, currentY);
+        currentY += 4.5;
+      }
+      currentY += 6;
+
+      doc.setDrawColor(220, 220, 220);
+      doc.line(20, currentY, 190, currentY);
+      currentY += 8;
+
+      // Recommendations
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(26, 26, 26);
+      doc.text("EMPFEHLUNG:", 20, currentY);
+
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(80, 80, 80);
+      const recText = r.recommendation || 'Keine Angabe.';
+      const splitRec = doc.splitTextToSize(recText, 170);
+      doc.text(splitRec, 20, currentY + 5);
+
+      currentY += 5 + (splitRec.length * 4.5) + 12;
+
+      // Disclaimer footer
+      doc.setFillColor(245, 245, 245);
+      doc.rect(20, 255, 170, 22, 'F');
+      doc.setDrawColor(210, 210, 210);
+      doc.rect(20, 255, 170, 22, 'S');
+
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(120, 120, 120);
+      doc.text("WICHTIGER RECHTLICHER HINWEIS", 105, 260, { align: 'center' });
+
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(6.5);
+      doc.setTextColor(140, 140, 140);
+      const discText = r.disclaimer || "Diese Analyse ist eine KI-basierte Ersteinschätzung und ersetzt keine professionelle physische Prüfung oder ein offizielles Echtheitszertifikat.";
+      const splitDisc = doc.splitTextToSize(discText, 160);
+      doc.text(splitDisc, 105, 264, { align: 'center' });
+
+      doc.save(`Laminimas-Echtheitscheck-${rawData.id}.pdf`);
+    }
+  </script>
+</body>
+</html>

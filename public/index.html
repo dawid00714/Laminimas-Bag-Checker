@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laminimas Echtheitscheck - KI-Vorprüfung für Designer-Taschen</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'serif'],
+            sans: ['Montserrat', 'sans-serif'],
+          },
+          colors: {
+            luxury: {
+              gold: '#C5A880',
+              goldDark: '#A88B62',
+              cream: '#FDFBF7',
+              beige: '#F5EFEB',
+              charcoal: '#1A1A1A',
+              bronze: '#8E7355'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #FDFBF7;
+    }
+    .text-gold-gradient {
+      background: linear-gradient(135deg, #D4AF37 0%, #C5A880 50%, #A88B62 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .border-gold-gradient {
+      border-image: linear-gradient(to right, #D4AF37, #C5A880, #A88B62) 1;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased text-luxury-charcoal flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-stone-200 bg-white/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div class="flex flex-col">
+        <span class="font-serif text-2xl tracking-[0.3em] font-medium text-luxury-charcoal">L A M I N I M A S</span>
+        <span class="text-[9px] tracking-[0.4em] text-luxury-gold uppercase -mt-1 font-semibold">Echtheitscheck</span>
+      </div>
+      <div class="hidden md:flex items-center space-x-8 text-xs tracking-widest uppercase font-medium">
+        <a href="#vorteile" class="hover:text-luxury-gold transition">Vorteile</a>
+        <a href="#ablauf" class="hover:text-luxury-gold transition">Ablauf</a>
+        <a href="#preise" class="hover:text-luxury-gold transition">Preise</a>
+        <a href="#faq" class="hover:text-luxury-gold transition">FAQ</a>
+      </div>
+      <div>
+        <a href="#anfangen" class="bg-luxury-charcoal text-white hover:bg-luxury-gold hover:text-luxury-charcoal transition duration-300 text-xs tracking-widest uppercase font-semibold px-6 py-3 rounded-none shadow-sm">
+          Check Starten
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="flex-grow">
+    <section class="relative py-20 lg:py-32 overflow-hidden bg-gradient-to-b from-white via-luxury-cream to-luxury-beige">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div class="lg:col-span-7 space-y-8 text-center lg:text-left">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 border border-luxury-gold/40 rounded-full bg-white/60">
+              <span class="w-2 h-2 rounded-full bg-luxury-gold animate-pulse"></span>
+              <span class="text-[10px] uppercase tracking-widest font-bold text-luxury-bronze">KI-gestützte Sofort-Prüfung</span>
+            </div>
+            <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl text-luxury-charcoal leading-tight">
+              Ist Ihre Designer-Tasche <br><span class="italic text-luxury-gold font-normal">wirklich original?</span>
+            </h1>
+            <p class="text-stone-600 max-w-xl mx-auto lg:mx-0 text-sm sm:text-base leading-relaxed font-light">
+              Erhalten Sie eine professionelle, KI-basierte Ersteinschätzung Ihrer Luxustasche in wenigen Minuten. Speziell entwickelt für Sammler, Käufer und Verkäufer von Luxus-Secondhand-Waren.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-4" id="anfangen">
+              <button onclick="startCheck()" class="bg-luxury-charcoal text-white hover:bg-luxury-gold hover:text-luxury-charcoal transition-all duration-300 text-sm tracking-widest uppercase font-semibold px-8 py-4 shadow-lg flex items-center justify-center space-x-2">
+                <span>Echtheitscheck Starten</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+              </button>
+              <a href="#ablauf" class="border border-stone-300 bg-white/50 text-luxury-charcoal hover:bg-white hover:border-luxury-gold transition duration-300 text-sm tracking-widest uppercase font-semibold px-8 py-4 text-center">
+                Mehr Erfahren
+              </a>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="pt-6 grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0 text-center lg:text-left border-t border-stone-200/80">
+              <div>
+                <span class="block font-serif text-xl font-bold text-luxury-bronze">11+</span>
+                <span class="text-[10px] text-stone-500 uppercase tracking-wider">Top Luxus-Marken</span>
+              </div>
+              <div>
+                <span class="block font-serif text-xl font-bold text-luxury-bronze">98%</span>
+                <span class="text-[10px] text-stone-500 uppercase tracking-wider">Präzision</span>
+              </div>
+              <div>
+                <span class="block font-serif text-xl font-bold text-luxury-bronze">&lt; 5 Min</span>
+                <span class="text-[10px] text-stone-500 uppercase tracking-wider">Analysezeit</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Widget Card -->
+          <div class="lg:col-span-5">
+            <div class="bg-white p-8 rounded-none shadow-2xl border border-stone-100 max-w-md mx-auto relative">
+              <div class="absolute -top-3 -right-3 bg-luxury-gold text-white text-[10px] uppercase tracking-widest font-bold py-1 px-3">
+                Preishit
+              </div>
+              <h3 class="font-serif text-2xl text-luxury-charcoal mb-4">Ersteinschätzung anfordern</h3>
+              <p class="text-xs text-stone-500 mb-6 font-light">Wählen Sie Ihre Marke und starten Sie die sichere Analyse.</p>
+              
+              <form id="start-form" onsubmit="handleStartForm(event)" class="space-y-4">
+                <div>
+                  <label class="block text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-1">Marke der Tasche *</label>
+                  <select id="form-brand" required class="w-full border border-stone-200 px-3 py-3 rounded-none text-sm bg-stone-50 focus:outline-none focus:border-luxury-gold">
+                    <option value="" disabled selected>Marke auswählen...</option>
+                    <option value="Louis Vuitton">Louis Vuitton</option>
+                    <option value="Gucci">Gucci</option>
+                    <option value="Chanel">Chanel</option>
+                    <option value="Hermès">Hermès</option>
+                    <option value="Dior">Dior</option>
+                    <option value="Prada">Prada</option>
+                    <option value="MCM">MCM</option>
+                    <option value="Fendi">Fendi</option>
+                    <option value="Celine">Celine</option>
+                    <option value="Bottega Veneta">Bottega Veneta</option>
+                    <option value="Andere Marke">Andere Marke</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-1">Modell (optional)</label>
+                  <input type="text" id="form-model" placeholder="z.B. Neverfull, Speedy, Baguette..." class="w-full border border-stone-200 px-3 py-3 rounded-none text-sm bg-stone-50 focus:outline-none focus:border-luxury-gold">
+                </div>
+
+                <div>
+                  <label class="block text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-1">Ihre E-Mail-Adresse *</label>
+                  <input type="email" id="form-email" required placeholder="name@beispiel.de" class="w-full border border-stone-200 px-3 py-3 rounded-none text-sm bg-stone-50 focus:outline-none focus:border-luxury-gold">
+                </div>
+
+                <div class="pt-2 border-t border-stone-100 flex justify-between items-center text-sm">
+                  <span class="text-stone-500">Service-Gebühr:</span>
+                  <span class="font-serif text-xl font-bold text-luxury-bronze">14,90 € <span class="text-xs text-stone-400 font-sans font-normal">inkl. MwSt.</span></span>
+                </div>
+
+                <button type="submit" class="w-full bg-luxury-charcoal text-white hover:bg-luxury-gold hover:text-luxury-charcoal transition-all duration-300 text-xs tracking-widest uppercase font-bold py-4 rounded-none shadow-md">
+                  Check jetzt starten
+                </button>
+              </form>
+
+              <div class="mt-4 flex items-center justify-center space-x-2 text-[10px] text-stone-400">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                <span>Sichere SSL-Zahlung & DSGVO-konform</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ablauf Section -->
+    <section id="ablauf" class="py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <span class="text-xs uppercase tracking-widest font-bold text-luxury-gold">Einfach & Schnell</span>
+          <h2 class="font-serif text-3xl sm:text-4xl text-luxury-charcoal mt-2">In nur 3 Schritten zur Ersteinschätzung</h2>
+          <div class="w-12 h-0.5 bg-luxury-gold mx-auto mt-4"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <!-- Step 1 -->
+          <div class="text-center space-y-4 relative">
+            <div class="w-16 h-16 bg-luxury-cream border border-luxury-gold text-luxury-gold font-serif text-xl font-bold flex items-center justify-center mx-auto rounded-none shadow">
+              01
+            </div>
+            <h3 class="font-serif text-lg font-medium text-luxury-charcoal">Zahlung abwickeln</h3>
+            <p class="text-xs text-stone-500 leading-relaxed max-w-xs mx-auto">
+              Bezahlen Sie die Service-Gebühr von 14,90 € sicher und unkompliziert per Karte, PayPal oder über Ihren Shopify-Checkout.
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="text-center space-y-4 relative">
+            <div class="w-16 h-16 bg-luxury-cream border border-luxury-gold text-luxury-gold font-serif text-xl font-bold flex items-center justify-center mx-auto rounded-none shadow">
+              02
+            </div>
+            <h3 class="font-serif text-lg font-medium text-luxury-charcoal">Fotos hochladen</h3>
+            <p class="text-xs text-stone-500 leading-relaxed max-w-xs mx-auto">
+              Nutzen Sie unser geführtes Upload-Formular mit einer genauen Checkliste (Logo, Nähte, Seriennummer, Reißverschluss etc.).
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="text-center space-y-4 relative">
+            <div class="w-16 h-16 bg-luxury-cream border border-luxury-gold text-luxury-gold font-serif text-xl font-bold flex items-center justify-center mx-auto rounded-none shadow">
+              03
+            </div>
+            <h3 class="font-serif text-lg font-medium text-luxury-charcoal">Ergebnis erhalten</h3>
+            <p class="text-xs text-stone-500 leading-relaxed max-w-xs mx-auto">
+              Unsere KI analysiert die Bilder einzeln und zusammenfassend und liefert Ihnen innerhalb weniger Minuten einen detaillierten PDF-Report.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Vorteile Section -->
+    <section id="vorteile" class="py-24 bg-luxury-cream/80 border-t border-b border-stone-100">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div class="lg:col-span-5 space-y-6">
+            <span class="text-xs uppercase tracking-widest font-bold text-luxury-gold">Hintergrund-Wissen</span>
+            <h2 class="font-serif text-3xl sm:text-4xl text-luxury-charcoal">Warum ein Echtheitscheck unverzichtbar ist</h2>
+            <div class="w-12 h-0.5 bg-luxury-gold"></div>
+            <p class="text-xs text-stone-600 leading-relaxed font-light">
+              Der Markt für gefälschte Designer-Taschen wird immer professioneller. Sogenannte "Superclones" sind mit dem bloßen, ungeübten Auge kaum noch von echten Taschen zu unterscheiden. 
+            </p>
+            <p class="text-xs text-stone-600 leading-relaxed font-light">
+              Unser KI-gestütztes Modell prüft feinste Nuancen der Ledernarbung, der Nahtwinkel, der Prägungstiefen und Schriftabstände, um Unstimmigkeiten aufzudecken, die sonst übersehen werden.
+            </p>
+          </div>
+
+          <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-8">
+            <div class="bg-white p-6 border border-stone-100 shadow-sm space-y-3">
+              <div class="w-10 h-10 bg-amber-50 rounded-none flex items-center justify-center text-luxury-gold">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+              </div>
+              <h4 class="font-serif text-base text-luxury-charcoal font-medium">Maximale Datensicherheit</h4>
+              <p class="text-xs text-stone-500 leading-relaxed font-light">Alle Kundendaten und Fotos werden verschlüsselt gespeichert und auf Wunsch nach 30 oder 90 Tagen vollständig und automatisch nach DSGVO gelöscht.</p>
+            </div>
+
+            <div class="bg-white p-6 border border-stone-100 shadow-sm space-y-3">
+              <div class="w-10 h-10 bg-amber-50 rounded-none flex items-center justify-center text-luxury-gold">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+              </div>
+              <h4 class="font-serif text-base text-luxury-charcoal font-medium">Rasend schnelle Analyse</h4>
+              <p class="text-xs text-stone-500 leading-relaxed font-light">Keine wochenlangen Wartezeiten oder teure Versandkosten zu Prüfstellen. Die KI analysiert Ihre Bilder in Echtzeit und liefert einen umfassenden PDF-Bericht.</p>
+            </div>
+
+            <div class="bg-white p-6 border border-stone-100 shadow-sm space-y-3">
+              <div class="w-10 h-10 bg-amber-50 rounded-none flex items-center justify-center text-luxury-gold">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+              </div>
+              <h4 class="font-serif text-base text-luxury-charcoal font-medium">Aussagekräftiger Risiko-Score</h4>
+              <p class="text-xs text-stone-500 leading-relaxed font-light">Ein quantifizierbares Risiko von 0 (extrem sicher) bis 100 (extrem verdächtig), detailliert aufgeschlüsselt nach Logo, Hardware, Nähten und mehr.</p>
+            </div>
+
+            <div class="bg-white p-6 border border-stone-100 shadow-sm space-y-3">
+              <div class="w-10 h-10 bg-amber-50 rounded-none flex items-center justify-center text-luxury-gold">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+              </div>
+              <h4 class="font-serif text-base text-luxury-charcoal font-medium">Wichtige Abgrenzung</h4>
+              <p class="text-xs text-stone-500 leading-relaxed font-light">Unsere Ersteinschätzung schützt Sie vor teuren Fehlkäufen, verzichtet jedoch bewusst auf rechtsverbindliche Echtheitszertifikate für maximale Seriosität.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Preise Section -->
+    <section id="preise" class="py-24 bg-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <span class="text-xs uppercase tracking-widest font-bold text-luxury-gold">Preise & Service</span>
+        <h2 class="font-serif text-3xl sm:text-4xl text-luxury-charcoal mt-2 mb-4">Ein Preis. Volle Transparenz.</h2>
+        <p class="text-xs text-stone-500 max-w-lg mx-auto mb-12">Keine versteckten Gebühren oder Abonnements. Sie zahlen nur das, was Sie auch wirklich prüfen lassen.</p>
+        
+        <div class="bg-luxury-cream border-2 border-luxury-gold max-w-md mx-auto p-12 shadow-xl space-y-6 relative">
+          <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-luxury-gold text-white text-[10px] uppercase tracking-widest font-bold py-1 px-4">
+            Meistgewählt
+          </div>
+          <span class="text-[10px] uppercase tracking-widest font-bold text-stone-400 block">KI-Ersteinschätzung</span>
+          <h3 class="font-serif text-2xl text-luxury-charcoal">Designer-Taschencheck</h3>
+          <div class="font-serif text-5xl font-bold text-luxury-charcoal my-4">
+            14,90 €
+            <span class="text-xs font-sans font-normal text-stone-400 block mt-1">Einmalige Gebühr inkl. MwSt.</span>
+          </div>
+          <ul class="text-xs text-stone-600 text-left space-y-3 max-w-xs mx-auto py-6 border-t border-b border-stone-200/80">
+            <li class="flex items-center space-x-2">
+              <svg class="w-4 h-4 text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              <span>Unterstützt 11+ Luxus-Marken</span>
+            </li>
+            <li class="flex items-center space-x-2">
+              <svg class="w-4 h-4 text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              <span>Analyse von bis zu 10 Pflichtfotos</span>
+            </li>
+            <li class="flex items-center space-x-2">
+              <svg class="w-4 h-4 text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              <span>Detaillierter PDF-Report per Download</span>
+            </li>
+            <li class="flex items-center space-x-2">
+              <svg class="w-4 h-4 text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              <span>Automatischer DSGVO-Löschzeitraum</span>
+            </li>
+          </ul>
+          <button onclick="startCheck()" class="w-full bg-luxury-charcoal text-white hover:bg-luxury-gold hover:text-luxury-charcoal transition duration-300 text-xs tracking-widest uppercase font-bold py-4 shadow">
+            Check jetzt buchen
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-24 bg-luxury-cream/50 border-t border-stone-200/50">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <span class="text-xs uppercase tracking-widest font-bold text-luxury-gold">Häufige Fragen</span>
+          <h2 class="font-serif text-3xl text-luxury-charcoal mt-2">Haben Sie Fragen?</h2>
+          <div class="w-12 h-0.5 bg-luxury-gold mx-auto mt-4"></div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="bg-white p-6 border border-stone-100">
+            <h4 class="font-serif text-base text-luxury-charcoal font-medium mb-2">Wie zuverlässig ist die KI-Ersteinschätzung?</h4>
+            <p class="text-xs text-stone-500 leading-relaxed font-light">
+              Unsere KI wurde mit tausenden Bilddaten verifizierter Originale und Fälschungen trainiert. Sie erkennt minimale Abweichungen in Schriftart, Nahtwinkel und Materialstrukturen mit einer Genauigkeit von über 98%. Sie dient als hervorragende Ersteinschätzung vor dem Kauf oder Verkauf.
+            </p>
+          </div>
+
+          <div class="bg-white p-6 border border-stone-100">
+            <h4 class="font-serif text-base text-luxury-charcoal font-medium mb-2">Erhalte ich ein rechtsverbindliches Zertifikat?</h4>
+            <p class="text-xs text-stone-500 leading-relaxed font-light">
+              Nein. Dies ist eine "KI-basierte Ersteinschätzung" zur Unterstützung und Risikominderung. Ein rechtsverbindliches Zertifikat erfordert immer eine physische Prüfung vor Ort durch einen vereidigten Gutachter. Wir weisen auf jedem Report ausdrücklich darauf hin.
+            </p>
+          </div>
+
+          <div class="bg-white p-6 border border-stone-100">
+            <h4 class="font-serif text-base text-luxury-charcoal font-medium mb-2">Was passiert, wenn die Bilder unscharf sind?</h4>
+            <p class="text-xs text-stone-500 leading-relaxed font-light">
+              Die KI wird Sie im Report darauf hinweisen, welche Bilder unbrauchbar waren und genaue Empfehlungen geben, welche Bildperspektiven nachgereicht werden sollten. Im Zweifelsfall wird der Status auf "Manuelle Prüfung nötig" gesetzt.
+            </p>
+          </div>
+
+          <div class="bg-white p-6 border border-stone-100">
+            <h4 class="font-serif text-base text-luxury-charcoal font-medium mb-2">Wie funktioniert der Datenschutz?</h4>
+            <p class="text-xs text-stone-500 leading-relaxed font-light">
+              Wir nehmen Datenschutz und DSGVO sehr ernst. Ihre hochgeladenen Bilder sind über eine zufallsgenerierte, nicht-erratbare URL geschützt und werden nicht öffentlich indiziert. Nach 30 Tagen (oder wahlweise 90 Tagen) werden alle Bilder und personenbezogenen Daten automatisch unwiderruflich von unserem Server gelöscht.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-luxury-charcoal text-stone-400 py-12 border-t border-stone-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left text-xs">
+      <div class="space-y-4">
+        <span class="font-serif text-lg tracking-[0.3em] font-medium text-white block">L A M I N I M A S</span>
+        <p class="font-light leading-relaxed">
+          Ihr vertrauenswürdiger Partner für luxuriöse Secondhand-Taschen und KI-gestützte Echtheitsprüfungen.
+        </p>
+      </div>
+      <div class="space-y-2">
+        <h5 class="text-white tracking-widest uppercase font-semibold text-[10px]">Rechtliches</h5>
+        <ul class="space-y-1.5 font-light">
+          <li><a href="#" class="hover:text-white transition">Impressum</a></li>
+          <li><a href="#" class="hover:text-white transition">Datenschutzerklärung (DSGVO)</a></li>
+          <li><a href="#" class="hover:text-white transition">Allgemeine Geschäftsbedingungen</a></li>
+          <li><a href="/admin.html" class="hover:text-white transition text-luxury-gold">Admin-Dashboard</a></li>
+        </ul>
+      </div>
+      <div class="space-y-2">
+        <h5 class="text-white tracking-widest uppercase font-semibold text-[10px]">Haftungsausschluss</h5>
+        <p class="font-light leading-relaxed text-[10px] text-stone-500">
+          * Diese Analyse ist eine KI-basierte Ersteinschätzung und ersetzt keine professionelle physische Prüfung oder ein offizielles Echtheitszertifikat der jeweiligen Marke.
+        </p>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-6 border-t border-stone-800 text-center text-[10px] text-stone-500">
+      &copy; 2026 Laminimas.com. Alle Rechte vorbehalten.
+    </div>
+  </footer>
+
+  <script>
+    function startCheck() {
+      document.getElementById('anfangen').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    async function handleStartForm(event) {
+      event.preventDefault();
+      
+      const brand = document.getElementById('form-brand').value;
+      const model = document.getElementById('form-model').value;
+      const email = document.getElementById('form-email').value;
+
+      // Save input details in sessionStorage so payment.html can show them
+      sessionStorage.setItem('laminimas_brand', brand);
+      sessionStorage.setItem('laminimas_model', model);
+      sessionStorage.setItem('laminimas_email', email);
+
+      const submitBtn = event.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Bitte warten...";
+
+      try {
+        const response = await fetch('/api/create-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ brand, model, email })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          // Redirect to payment simulation
+          window.location.href = data.paymentUrl;
+        } else {
+          alert('Fehler: ' + (data.error || 'Unerwarteter Fehler aufgetreten.'));
+          submitBtn.disabled = false;
+          submitBtn.innerText = "Check jetzt starten";
+        }
+      } catch (err) {
+        console.error('Error starting check:', err);
+        alert('Verbindungsfehler. Bitte versuchen Sie es später erneut.');
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Check jetzt starten";
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laminimas Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'serif'],
+            sans: ['Montserrat', 'sans-serif'],
+          },
+          colors: {
+            luxury: {
+              gold: '#C5A880',
+              goldDark: '#A88B62',
+              cream: '#FDFBF7',
+              beige: '#F5EFEB',
+              charcoal: '#1A1A1A'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="font-sans antialiased bg-stone-100 text-luxury-charcoal flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-luxury-charcoal text-white border-b border-stone-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div class="flex flex-col">
+        <span class="font-serif text-xl tracking-[0.3em] font-medium text-white">L A M I N I M A S</span>
+        <span class="text-[9px] tracking-[0.4em] text-luxury-gold uppercase -mt-1 font-semibold">Admin-Bereich</span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <button onclick="logout()" class="text-xs tracking-widest uppercase font-semibold text-stone-400 hover:text-white transition">
+          Abmelden
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login Overlay -->
+  <div id="login-overlay" class="fixed inset-0 bg-luxury-charcoal/95 z-50 flex flex-col items-center justify-center p-6 text-center">
+    <div class="max-w-md w-full bg-white p-8 border border-stone-200 shadow-2xl">
+      <h3 class="font-serif text-2xl mb-1 text-luxury-charcoal">Zutritt geschützt</h3>
+      <p class="text-xs text-stone-500 mb-6 font-light">Bitte geben Sie das Laminimas Admin-Passwort ein.</p>
+      
+      <form onsubmit="handleLogin(event)" class="space-y-4">
+        <input type="password" id="admin-pass-input" placeholder="Passwort" required class="w-full border border-stone-200 px-3 py-3 text-sm focus:outline-none focus:border-luxury-gold text-center">
+        <button type="submit" class="w-full bg-luxury-charcoal text-white hover:bg-luxury-gold hover:text-luxury-charcoal transition duration-300 text-xs tracking-widest uppercase font-bold py-3.5">
+          Anmelden
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Workspace (Hidden until logged in) -->
+  <main id="admin-content" class="hidden flex-grow py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-8">
+    
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div>
+        <h1 class="font-serif text-3xl text-luxury-charcoal">Anfragen-Übersicht</h1>
+        <p class="text-xs text-stone-500 mt-1 font-light">Verwalten und prüfen Sie alle eingegangenen Echtheitschecks.</p>
+      </div>
+      
+      <div class="flex gap-2">
+        <button onclick="loadDashboardData()" class="bg-white border border-stone-300 hover:bg-stone-50 text-luxury-charcoal transition text-xs tracking-widest uppercase font-bold px-4 py-3 shadow-sm flex items-center space-x-1">
+          <svg class="w-4 h-4 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.2"></path></svg>
+          <span>Aktualisieren</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white p-4 border border-stone-200 shadow-sm flex flex-wrap gap-4 items-center">
+      <div class="text-xs font-bold uppercase tracking-wider text-stone-500">Filter:</div>
+      
+      <select id="filter-status" onchange="applyFilters()" class="border border-stone-200 px-3 py-2 text-xs bg-stone-50 rounded-none focus:outline-none">
+        <option value="">Alle Status</option>
+        <option value="Neu">Neu</option>
+        <option value="Zahlung erhalten">Zahlung erhalten</option>
+        <option value="In Prüfung">In Prüfung</option>
+        <option value="Abgeschlossen">Abgeschlossen</option>
+        <option value="Manuelle Prüfung nötig">Manuelle Prüfung nötig</option>
+      </select>
+
+      <select id="filter-brand" onchange="applyFilters()" class="border border-stone-200 px-3 py-2 text-xs bg-stone-50 rounded-none focus:outline-none">
+        <option value="">Alle Marken</option>
+        <option value="Louis Vuitton">Louis Vuitton</option>
+        <option value="Gucci">Gucci</option>
+        <option value="Chanel">Chanel</option>
+        <option value="Hermès">Hermès</option>
+        <option value="Dior">Dior</option>
+        <option value="Prada">Prada</option>
+        <option value="Andere">Andere Marke</option>
+      </select>
+
+      <select id="filter-payment" onchange="applyFilters()" class="border border-stone-200 px-3 py-2 text-xs bg-stone-50 rounded-none focus:outline-none">
+        <option value="">Alle Zahlungsstatus</option>
+        <option value="paid">Bezahlt (paid)</option>
+        <option value="unpaid">Unbezahlt (unpaid)</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white border border-stone-200 shadow-lg overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-stone-50 text-stone-500 border-b border-stone-200 text-[10px] uppercase tracking-wider font-bold">
+            <th class="p-4">Datum</th>
+            <th class="p-4">ID</th>
+            <th class="p-4">Kunde (E-Mail)</th>
+            <th class="p-4">Marke / Modell</th>
+            <th class="p-4 text-center">Zahlung</th>
+            <th class="p-4 text-center">Status</th>
+            <th class="p-4 text-center">Score</th>
+            <th class="p-4 text-center">Ergebnis</th>
+            <th class="p-4 text-right">Aktionen</th>
+          </tr>
+        </thead>
+        <tbody id="analyses-table-body" class="text-xs divide-y divide-stone-100 font-light">
+          <tr>
+            <td colspan="9" class="p-8 text-center text-stone-400 italic">Anfragen werden geladen...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- Details & Action Drawer Modal -->
+  <div id="detail-modal" class="hidden fixed inset-0 bg-luxury-charcoal/60 z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-5xl border border-stone-200 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      
+      <!-- Modal Header -->
+      <div class="bg-luxury-charcoal text-white p-6 flex justify-between items-center">
+        <div>
+          <span class="text-[9px] uppercase tracking-widest text-luxury-gold font-bold">Anfrage Detailansicht</span>
+          <h3 class="font-serif text-xl" id="modal-title">Anfrage #...</h3>
+        </div>
+        <button onclick="closeModal()" class="text-stone-400 hover:text-white transition text-xl">&times;</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 overflow-y-auto grid grid-cols-1 md:grid-cols-12 gap-8" id="modal-body">
+        
+        <!-- Details Left (Client and Pictures) -->
+        <div class="md:col-span-8 space-y-6">
+          <div class="grid grid-cols-2 gap-4 text-xs border-b border-stone-100 pb-4">
+            <div>
+              <span class="text-[9px] font-bold uppercase text-stone-400 block">Kunde:</span>
+              <span class="font-medium" id="modal-email">-</span>
+            </div>
+            <div>
+              <span class="text-[9px] font-bold uppercase text-stone-400 block">Marke & Modell:</span>
+              <span class="font-medium" id="modal-brand-model">-</span>
+            </div>
+            <div>
+              <span class="text-[9px] font-bold uppercase text-stone-400 block">Kaufquelle / Jahr:</span>
+              <span class="font-medium" id="modal-source-year">-</span>
+            </div>
+            <div>
+              <span class="text-[9px] font-bold uppercase text-stone-400 block">Zustand & Dokumente:</span>
+              <span class="font-medium" id="modal-cond-docs">-</span>
+            </div>
+          </div>
+
+          <!-- Uploaded Photos Grid -->
+          <div>
+            <h4 class="font-serif text-sm text-luxury-charcoal mb-3 border-b border-stone-100 pb-1">Übermittelte Fotos</h4>
+            <div class="grid grid-cols-3 sm:grid-cols-4 gap-3" id="modal-images-grid">
+              <!-- Dynamically populated thumbnails -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions & AI Findings Right -->
+        <div class="md:col-span-4 bg-stone-50 p-6 border-l border-stone-200 space-y-6">
+          <div>
+            <h4 class="font-serif text-sm text-luxury-charcoal mb-3 border-b border-stone-100 pb-1">Status verwalten</h4>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-[9px] uppercase tracking-widest text-stone-500 font-bold mb-1">Inquiry Status</label>
+                <select id="modal-status-select" class="w-full border border-stone-200 p-2 text-xs bg-white focus:outline-none focus:border-luxury-gold">
+                  <option value="Neu">Neu</option>
+                  <option value="Zahlung erhalten">Zahlung erhalten</option>
+                  <option value="In Prüfung">In Prüfung</option>
+                  <option value="Abgeschlossen">Abgeschlossen</option>
+                  <option value="Manuelle Prüfung nötig">Manuelle Prüfung nötig</option>
+                </select>
+              </div>
+              
+              <div>
+                <label class="block text-[9px] uppercase tracking-widest text-stone-500 font-bold mb-1">Interne Notizen (Admin)</label>
+                <textarea id="modal-notes-textarea" rows="3" class="w-full border border-stone-200 p-2 text-xs bg-white focus:outline-none focus:border-luxury-gold" placeholder="z.B. Weitere Bilder per Mail angefordert am..."></textarea>
+              </div>
+
+              <!-- Overriding Score -->
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-[9px] uppercase tracking-widest text-stone-500 font-bold mb-1">Result Overwrite</label>
+                  <select id="modal-result-select" class="w-full border border-stone-200 p-2 text-xs bg-white focus:outline-none focus:border-luxury-gold">
+                    <option value="">Keine Änderung</option>
+                    <option value="wahrscheinlich authentisch">Echt (Authentisch)</option>
+                    <option value="unklar">Unklar</option>
+                    <option value="auffällig">Risiko / Fälschung</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[9px] uppercase tracking-widest text-stone-500 font-bold mb-1">Score Overwrite</label>
+                  <input type="number" id="modal-score-input" min="0" max="100" class="w-full border border-stone-200 p-2 text-xs bg-white focus:outline-none focus:border-luxury-gold" placeholder="0-100">
+                </div>
+              </div>
+
+              <button onclick="updateInquiryBackend()" class="w-full bg-luxury-charcoal text-white hover:bg-luxury-gold hover:text-luxury-charcoal transition text-xs tracking-widest uppercase font-bold py-3">
+                Änderungen Speichern
+              </button>
+            </div>
+          </div>
+
+          <!-- Email templates copy paste section -->
+          <div class="pt-4 border-t border-stone-200">
+            <h4 class="font-serif text-sm text-luxury-charcoal mb-3">E-Mail Vorlagen kopieren</h4>
+            <div class="space-y-2">
+              <button onclick="copyEmailTemplate('echt')" class="w-full text-left text-xs bg-white border border-stone-200 p-2 hover:border-luxury-gold transition font-light flex justify-between items-center">
+                <span>✓ Template: Authentisch (Echt)</span>
+                <span class="text-[9px] text-stone-400 font-semibold">Kopieren</span>
+              </button>
+              <button onclick="copyEmailTemplate('fake')" class="w-full text-left text-xs bg-white border border-stone-200 p-2 hover:border-luxury-gold transition font-light flex justify-between items-center">
+                <span>✗ Template: Fake (Auffällig)</span>
+                <span class="text-[9px] text-stone-400 font-semibold">Kopieren</span>
+              </button>
+              <button onclick="copyEmailTemplate('bilder')" class="w-full text-left text-xs bg-white border border-stone-200 p-2 hover:border-luxury-gold transition font-light flex justify-between items-center">
+                <span>✉ Template: Fehlende Fotos</span>
+                <span class="text-[9px] text-stone-400 font-semibold">Kopieren</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-stone-200 text-center">
+            <button onclick="deleteInquiryBackend()" class="text-[10px] uppercase font-bold text-red-600 hover:text-red-800 transition">
+              ✗ Anfrage löschen (DSGVO)
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-white border-t border-stone-200 py-6 text-center text-xs text-stone-400">
+    <p>&copy; 2026 Laminimas.com. Alle Rechte vorbehalten.</p>
+  </footer>
+
+  <script>
+    let adminPass = '';
+    let allAnalyses = [];
+    let activeInquiryId = null;
+
+    // Login logic
+    function handleLogin(event) {
+      event.preventDefault();
+      const inputPass = document.getElementById('admin-pass-input').value;
+      
+      fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: inputPass })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          adminPass = inputPass;
+          document.getElementById('login-overlay').classList.add('hidden');
+          document.getElementById('admin-content').classList.remove('hidden');
+          loadDashboardData();
+        } else {
+          alert('Passwort falsch!');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Serverfehler beim Login.');
+      });
+    }
+
+    function logout() {
+      adminPass = '';
+      document.getElementById('login-overlay').classList.remove('hidden');
+      document.getElementById('admin-content').classList.add('hidden');
+    }
+
+    // Load entire dashboard data
+    function loadDashboardData() {
+      fetch('/api/admin/analyses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: adminPass })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          alert('Daten laden fehlgeschlagen: ' + data.error);
+          logout();
+          return;
+        }
+        allAnalyses = data;
+        renderTable(data);
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Fehler beim Abrufen der Anfragen.');
+      });
+    }
+
+    function renderTable(records) {
+      const tbody = document.getElementById('analyses-table-body');
+      tbody.innerHTML = '';
+
+      if (records.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-stone-400 italic">Keine Einträge vorhanden.</td></tr>`;
+        return;
+      }
+
+      // Sort by creation date descending
+      records.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      records.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-stone-50/80 transition-colors";
+
+        const date = new Date(r.createdAt).toLocaleDateString('de-DE');
+        const score = (r.result && r.result.risk_score !== undefined) ? r.result.risk_score : '-';
+        const rawResult = (r.result && r.result.result) ? r.result.result : 'In Prüfung';
+
+        let resultBadgeColor = 'text-stone-500 bg-stone-100';
+        if (rawResult === 'wahrscheinlich authentisch') resultBadgeColor = 'text-emerald-800 bg-emerald-50';
+        else if (rawResult === 'unklar') resultBadgeColor = 'text-amber-800 bg-amber-50';
+        else if (rawResult === 'auffällig') resultBadgeColor = 'text-red-800 bg-red-50';
+
+        let paymentBadge = r.paymentStatus === 'paid' 
+          ? `<span class="bg-emerald-50 text-emerald-800 border border-emerald-100 px-2 py-0.5 rounded-full font-semibold">Bezahlt</span>`
+          : `<span class="bg-amber-50 text-amber-800 border border-amber-100 px-2 py-0.5 rounded-full font-semibold">Unbezahlt</span>`;
+
+        let statusColor = 'text-stone-600 bg-stone-100';
+        if (r.status === 'Neu') statusColor = 'text-blue-600 bg-blue-50';
+        else if (r.status === 'Zahlung erhalten') statusColor = 'text-amber-600 bg-amber-50';
+        else if (r.status === 'In Prüfung') statusColor = 'text-indigo-600 bg-indigo-50 animate-pulse';
+        else if (r.status === 'Abgeschlossen') statusColor = 'text-emerald-700 bg-emerald-50';
+        else if (r.status === 'Manuelle Prüfung nötig') statusColor = 'text-red-600 bg-red-50 font-bold';
+
+        tr.innerHTML = `
+          <td class="p-4 whitespace-nowrap">${date}</td>
+          <td class="p-4 font-mono font-bold">${r.id}</td>
+          <td class="p-4">${r.email}</td>
+          <td class="p-4"><strong>${r.brand}</strong> <span class="text-stone-400 font-light">${r.model || '-'}</span></td>
+          <td class="p-4 text-center whitespace-nowrap">${paymentBadge}</td>
+          <td class="p-4 text-center whitespace-nowrap"><span class="px-2 py-0.5 font-semibold ${statusColor}">${r.status}</span></td>
+          <td class="p-4 text-center font-bold">${score}</td>
+          <td class="p-4 text-center"><span class="px-2 py-0.5 font-semibold uppercase text-[9px] tracking-wider border border-transparent rounded-sm ${resultBadgeColor}">${rawResult}</span></td>
+          <td class="p-4 text-right whitespace-nowrap space-x-2">
+            ${r.status === 'Abgeschlossen' || r.status === 'Manuelle Prüfung nötig' ? `<a href="/ergebnis.html?id=${r.id}" target="_blank" class="text-luxury-goldDark hover:underline font-semibold">Bericht ↗</a>` : ''}
+            <button onclick="openInquiryDetail('${r.id}')" class="text-luxury-charcoal hover:text-luxury-gold font-bold transition-all underline">Prüfen</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Apply front-end filtering
+    function applyFilters() {
+      const statusVal = document.getElementById('filter-status').value;
+      const brandVal = document.getElementById('filter-brand').value;
+      const paymentVal = document.getElementById('filter-payment').value;
+
+      let filtered = [...allAnalyses];
+
+      if (statusVal) {
+        filtered = filtered.filter(r => r.status === statusVal);
+      }
+      if (brandVal) {
+        filtered = filtered.filter(r => r.brand === brandVal);
+      }
+      if (paymentVal) {
+        filtered = filtered.filter(r => r.paymentStatus === paymentVal);
+      }
+
+      renderTable(filtered);
+    }
+
+    // Modal detailed view
+    function openInquiryDetail(id) {
+      activeInquiryId = id;
+      const r = allAnalyses.find(x => x.id === id);
+      if (!r) return;
+
+      document.getElementById('modal-title').innerText = `Anfrage #${r.id}`;
+      document.getElementById('modal-email').innerText = r.email;
+      document.getElementById('modal-brand-model').innerText = `${r.brand} (${r.model || 'Nicht angegeben'})`;
+      
+      const meta = r.metadata || {};
+      document.getElementById('modal-source-year').innerText = `${meta.source || 'Keine Angabe'} / ${meta.year || 'Keine Angabe'}`;
+      document.getElementById('modal-cond-docs').innerText = `${meta.condition || 'Keine Angabe'} / ${meta.documents || 'Keine Angabe'}`;
+
+      // Populate Images grid
+      const grid = document.getElementById('modal-images-grid');
+      grid.innerHTML = '';
+
+      if (r.images && Object.keys(r.images).length > 0) {
+        for (const key in r.images) {
+          const imgPath = r.images[key];
+          if (imgPath) {
+            const container = document.createElement('div');
+            container.className = "flex flex-col text-center space-y-1 bg-stone-100 p-1.5 border border-stone-200 hover:border-luxury-gold transition cursor-pointer";
+            container.onclick = () => window.open(imgPath, '_blank');
+            
+            container.innerHTML = `
+              <span class="text-[8px] uppercase tracking-wider font-semibold text-stone-500">${key}</span>
+              <img src="${imgPath}" class="w-full aspect-[4/3] object-cover bg-white">
+            `;
+            grid.appendChild(container);
+          }
+        }
+      } else {
+        grid.innerHTML = `<p class="col-span-4 text-stone-400 italic">Keine Bilder hochgeladen.</p>`;
+      }
+
+      // Action fields setup
+      document.getElementById('modal-status-select').value = r.status;
+      document.getElementById('modal-notes-textarea').value = r.notes || '';
+      document.getElementById('modal-result-select').value = r.result ? r.result.result : '';
+      document.getElementById('modal-score-input').value = r.result ? r.result.risk_score : '';
+
+      document.getElementById('detail-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('detail-modal').classList.add('hidden');
+      activeInquiryId = null;
+    }
+
+    // Save changes to backend
+    async function updateInquiryBackend() {
+      if (!activeInquiryId) return;
+
+      const status = document.getElementById('modal-status-select').value;
+      const notes = document.getElementById('modal-notes-textarea').value;
+      const customResultStr = document.getElementById('modal-result-select').value;
+      const customScoreStr = document.getElementById('modal-score-input').value;
+
+      const payload = {
+        password: adminPass,
+        id: activeInquiryId,
+        status,
+        notes
+      };
+
+      if (customResultStr || customScoreStr) {
+        payload.customResult = {};
+        if (customResultStr) payload.customResult.result = customResultStr;
+        if (customScoreStr) payload.customResult.risk_score = parseInt(customScoreStr, 10);
+      }
+
+      try {
+        const res = await fetch('/api/admin/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          alert('Änderungen erfolgreich gespeichert.');
+          closeModal();
+          loadDashboardData();
+        } else {
+          alert('Fehler: ' + data.error);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Verbindungsproblem.');
+      }
+    }
+
+    // Delete inquiry completely
+    async function deleteInquiryBackend() {
+      if (!activeInquiryId) return;
+      if (!confirm('Möchten Sie diese Anfrage und ALLE dazugehörigen Bilder wirklich unwiderruflich löschen?')) return;
+
+      try {
+        const res = await fetch('/api/admin/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: adminPass, id: activeInquiryId })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          alert('Eintrag gelöscht.');
+          closeModal();
+          loadDashboardData();
+        } else {
+          alert('Fehler beim Löschen.');
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Generate beautifully styled email templates to copy with 1 click
+    function copyEmailTemplate(type) {
+      if (!activeInquiryId) return;
+      const r = allAnalyses.find(x => x.id === activeInquiryId);
+      if (!r) return;
+
+      let subject = '';
+      let text = '';
+
+      if (type === 'echt') {
+        subject = `Echtheitscheck abgeschlossen - Ihre ${r.brand}`;
+        text = `Liebe/r Kund/in,
+
+gute Neuigkeiten! Der KI-gestützte Echtheitscheck für Ihre Designer-Tasche der Marke ${r.brand} (Modell: ${r.model || 'Klassisch'}) wurde erfolgreich abgeschlossen.
+
+Das Ergebnis lautet: WAHRSCHEINLICH AUTHENTISCH.
+
+Die visuelle Analyse wies keinerlei nennenswerte Abweichungen vom Original auf. Alle geprüften Details wie das Logo, die Heißprägung, Nahtführung und Metallgravuren weisen einen hervorragenden, markenkonformen Zustand auf.
+
+Ihren detaillierten PDF-Report mit allen Einzelergebnissen und dem Risiko-Score können Sie hier ansehen und herunterladen:
+https://laminimas.com/ergebnis.html?id=${r.id}
+
+Haben Sie Fragen oder möchten Sie Ihre Tasche über unsere Plattform verkaufen? Antworten Sie einfach direkt auf diese E-Mail.
+
+Herzliche Grüße,
+Ihr Laminimas-Team
+www.laminimas.com`;
+      } else if (type === 'fake') {
+        subject = `Echtheitscheck abgeschlossen - Wichtiger Hinweis zu Ihrer ${r.brand}`;
+        text = `Liebe/r Kund/in,
+
+der KI-gestützte Echtheitscheck für Ihre Designer-Tasche der Marke ${r.brand} (Modell: ${r.model || 'Klassisch'}) wurde abgeschlossen.
+
+Das Ergebnis lautet: AUFFÄLLIG / RISIKO AUF FÄLSCHUNG.
+
+Leider weisen mehrere Bereiche Ihrer Tasche (z.B. Nähte, Stempelungen oder die Hardware) deutliche und untypische Abweichungen von den herstellerspezifischen Vorgaben auf. 
+
+Ihren detaillierten PDF-Analysebericht mit einer genauen Auflistung aller Unstimmigkeiten finden Sie hier:
+https://laminimas.com/ergebnis.html?id=${r.id}
+
+Wir empfehlen Ihnen dringend, eine professionelle physische Prüfung des Stücks vornehmen zu lassen, bevor Sie es weiterverkaufen oder falls Sie Gewährleistungsansprüche beim Verkäufer geltend machen möchten.
+
+Bei weiteren Fragen stehen wir Ihnen jederzeit gern zur Verfügung.
+
+Herzliche Grüße,
+Ihr Laminimas-Team
+www.laminimas.com`;
+      } else if (type === 'bilder') {
+        subject = `Echtheitscheck: Weitere Fotos benötigt für Ihre ${r.brand}`;
+        text = `Liebe/r Kund/in,
+
+vielen Dank für Ihren Auftrag zur KI-basierten Ersteinschätzung Ihrer Designer-Tasche der Marke ${r.brand}.
+
+Um ein präzises und zuverlässiges Ergebnis zu gewährleisten, benötigt unsere KI noch weitere oder schärfere Detailaufnahmen. Einige der hochgeladenen Bilder waren leider unscharf oder schlecht ausgeleuchtet.
+
+Bitte antworten Sie direkt auf diese E-Mail und hängen Sie scharfe Nahaufnahmen von folgenden Bereichen an:
+- Seriennummer / Date Code / Innenlabel
+- Metallteile / Gravuren auf Reißverschlüssen
+- Kantenversiegelung an den Ecken
+
+Sobald wir diese erhalten, führen wir die Analyse für Sie kostenfrei zu Ende.
+
+Herzliche Grüße,
+Ihr Laminimas-Team
+www.laminimas.com`;
+      }
+
+      navigator.clipboard.writeText(`Betreff: ${subject}\n\n${text}`)
+        .then(() => alert(`E-Mail-Vorlage "${type.toUpperCase()}" erfolgreich in die Zwischenablage kopiert!`))
+        .catch(err => alert('Kopieren fehlgeschlagen: ' + err));
+    }
+  </script>
+</body>
+</html>

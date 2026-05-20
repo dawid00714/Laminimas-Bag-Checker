@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fotos hochladen - Laminimas Echtheitscheck</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'serif'],
+            sans: ['Montserrat', 'sans-serif'],
+          },
+          colors: {
+            luxury: {
+              gold: '#C5A880',
+              goldDark: '#A88B62',
+              cream: '#FDFBF7',
+              beige: '#F5EFEB',
+              charcoal: '#1A1A1A'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .image-slot {
+      aspect-ratio: 4/3;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased bg-luxury-cream text-luxury-charcoal flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-stone-200 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div class="flex flex-col">
+        <span class="font-serif text-2xl tracking-[0.3em] font-medium text-luxury-charcoal">L A M I N I M A S</span>
+        <span class="text-[9px] tracking-[0.4em] text-luxury-gold uppercase -mt-1 font-semibold">Echtheitscheck</span>
+      </div>
+      <div class="text-xs text-stone-500 font-medium flex items-center space-x-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+        <span id="header-token-status">Token verifiziert</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Progress Steps Indicator -->
+  <div class="max-w-xl mx-auto w-full px-4 pt-10">
+    <div class="flex items-center justify-between text-xs font-semibold tracking-widest text-stone-400">
+      <div class="flex items-center text-stone-500 space-x-2">
+        <span class="w-6 h-6 rounded-full border border-stone-300 flex items-center justify-center font-serif">✓</span>
+        <span>ZAHLUNG</span>
+      </div>
+      <div class="w-16 h-px bg-stone-300"></div>
+      <div class="flex items-center text-luxury-gold space-x-2">
+        <span class="w-6 h-6 rounded-full border border-luxury-gold flex items-center justify-center font-serif">2</span>
+        <span>UPLOADS</span>
+      </div>
+      <div class="w-16 h-px bg-stone-300"></div>
+      <div class="flex items-center space-x-2">
+        <span class="w-6 h-6 rounded-full border border-stone-300 flex items-center justify-center font-serif">3</span>
+        <span>BERICHT</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay for Upload Submission -->
+  <div id="upload-overlay" class="hidden fixed inset-0 bg-luxury-charcoal/85 z-50 flex flex-col items-center justify-center text-white p-6 text-center">
+    <div class="w-16 h-16 border-4 border-luxury-gold border-t-transparent rounded-full animate-spin mb-6"></div>
+    <h3 class="font-serif text-2xl mb-2">Bilder werden hochgeladen...</h3>
+    <p class="text-xs text-stone-400 max-w-sm leading-relaxed">Bitte schließen Sie dieses Fenster nicht. Dies kann bis zu einer Minute dauern, während wir die Bilder komprimieren und an die KI übergeben.</p>
+  </div>
+
+  <!-- Main Content Form -->
+  <main class="flex-grow py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto bg-white border border-stone-200 p-8 sm:p-12 shadow-xl">
+      <div class="border-b border-stone-200 pb-6 mb-8 text-center sm:text-left">
+        <span class="text-[10px] uppercase tracking-widest font-bold text-luxury-gold block mb-1">Schritt 2 von 3</span>
+        <h2 class="font-serif text-3xl text-luxury-charcoal">Details & Fotos übermitteln</h2>
+        <p class="text-xs text-stone-500 mt-2 font-light">Laden Sie scharfe und gut ausgeleuchtete Fotos der aufgelisteten Bereiche hoch, um ein optimales KI-Ergebnis zu erzielen.</p>
+      </div>
+
+      <form id="upload-form" onsubmit="submitAnalysis(event)" class="space-y-10">
+        
+        <!-- 1. General Info -->
+        <div class="space-y-4">
+          <h3 class="font-serif text-lg text-luxury-charcoal border-b border-stone-100 pb-2">Allgemeine Informationen</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-1">Marke *</label>
+              <input type="text" id="brand" required readonly class="w-full border border-stone-200 px-3 py-3 rounded-none text-xs bg-stone-50 focus:outline-none cursor-not-allowed">
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-1">Modell</label>
+              <input type="text" id="model" class="w-full border border-stone-200 px-3 py-3 rounded-none text-xs bg-stone-50 focus:outline-none focus:border-luxury-gold" placeholder="z.B. Speedy 30, Marmont...">
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Extra Details (Optional) -->
+        <div class="space-y-4">
+          <h3 class="font-serif text-lg text-luxury-charcoal border-b border-stone-100 pb-2">Zusatzangaben (Optional, hilft der KI)</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-1">Kaufquelle</label>
+              <input type="text" id="source" placeholder="z.B. Ebay, Store, Flohmarkt" class="w-full border border-stone-200 px-3 py-3 rounded-none text-xs focus:outline-none focus:border-luxury-gold">
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-1">Kaufjahr</label>
+              <input type="text" id="year" placeholder="z.B. 2019" class="w-full border border-stone-200 px-3 py-3 rounded-none text-xs focus:outline-none focus:border-luxury-gold">
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-1">Zustand</label>
+              <select id="condition" class="w-full border border-stone-200 px-3 py-3 rounded-none text-xs bg-white focus:outline-none focus:border-luxury-gold">
+                <option value="">Auswählen...</option>
+                <option value="Neu / Ungetragen">Neu / Ungetragen</option>
+                <option value="Sehr Gut">Sehr Gut (kaum Tragespuren)</option>
+                <option value="Gut">Gut (normale Abnutzung)</option>
+                <option value="Stark getragen">Stark getragen</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-1">Vorhandene Dokumente</label>
+              <input type="text" id="documents" placeholder="z.B. Rechnung, Staubbeutel" class="w-full border border-stone-200 px-3 py-3 rounded-none text-xs focus:outline-none focus:border-luxury-gold">
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Photo Upload Grid -->
+        <div class="space-y-6">
+          <div class="flex items-baseline justify-between border-b border-stone-100 pb-2">
+            <h3 class="font-serif text-lg text-luxury-charcoal">Führungs-Upload</h3>
+            <span class="text-[9px] uppercase tracking-widest font-bold text-stone-400">Erlaubt: JPG, PNG, WEBP (Max 10MB)</span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            
+            <!-- Vorderseite -->
+            <div class="flex flex-col">
+              <label class="text-[10px] tracking-wider font-bold mb-1 uppercase text-stone-500">Vorderseite *</label>
+              <div class="relative image-slot bg-stone-100 border border-dashed border-stone-300 flex flex-col items-center justify-center cursor-pointer hover:bg-stone-200/50 hover:border-luxury-gold transition group">
+                <input type="file" required accept="image/png, image/jpeg, image/webp" onchange="previewImage(this, 'preview-front')" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                <img id="preview-front" class="hidden absolute inset-0 w-full h-full object-cover">
+                <div class="text-center p-2 pointer-events-none group-hover:scale-105 transition-transform">
+                  <svg class="w-6 h-6 mx-auto text-stone-400 group-hover:text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                  <span class="text-[8px] uppercase tracking-widest font-bold text-stone-400 block mt-1">Auswählen</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rückseite -->
+            <div class="flex flex-col">
+              <label class="text-[10px] tracking-wider font-bold mb-1 uppercase text-stone-500">Rückseite *</label>
+              <div class="relative image-slot bg-stone-100 border border-dashed border-stone-300 flex flex-col items-center justify-center cursor-pointer hover:bg-stone-200/50 hover:border-luxury-gold transition group">
+                <input type="file" required accept="image/png, image/jpeg, image/webp" onchange="previewImage(this, 'preview-back')" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                <img id="preview-back" class="hidden absolute inset-0 w-full h-full object-cover">
+                <div class="text-center p-2 pointer-events-none group-hover:scale-105 transition-transform">
+                  <svg class="w-6 h-6 mx-auto text-stone-400 group-hover:text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                  <span class="text-[8px] uppercase tracking-widest font-bold text-stone-400 block mt-1">Auswählen</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Innenraum -->
+            <div class="flex flex-col">
+              <label class="text-[10px] tracking-wider font-bold mb-1 uppercase text-stone-500">Innenraum *</label>
+              <div class="relative image-slot bg-stone-100 border border-dashed border-stone-300 flex flex-col items-center justify-center cursor-pointer hover:bg-stone-200/50 hover:border-luxury-gold transition group">
+                <input type="file" required accept="image/png, image/jpeg, image/webp" onchange="previewImage(this, 'preview-inside')" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                <img id="preview-inside" class="hidden absolute inset-0 w-full h-full object-cover">
+                <div class="text-center p-2 pointer-events-none group-hover:scale-105 transition-transform">
+                  <svg class="w-6 h-6 mx-auto text-stone-400 group-hover:text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                  <span class="text-[8px] uppercase tracking-widest font-bold text-stone-400 block mt-1">Auswählen</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Logo -->
+            <div class="flex flex-col">
+              <label class="text-[10px] tracking-wider font-bold mb-1 uppercase text-stone-500">Logo / Prägung *</label>
+              <div class="relative image-slot bg-stone-100 border border-dashed border-stone-300 flex flex-col items-center justify-center cursor-pointer hover:bg-stone-200/50 hover:border-luxury-gold transition group">
+                <input type="file" required accept="image/png, image/jpeg, image/webp" onchange="previewImage(this, 'preview-logo')" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                <img id="preview-logo" class="hidden absolute inset-0 w-full h-full object-cover">
+                <div class="text-center p-2 pointer-events-none group-hover:scale-105 transition-transform">
+                  <svg class="w-6 h-6 mx-auto text-stone-400 group-hover:text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                  <span class="text-[8px] uppercase tracking-widest font-bold text-stone-400 block mt-1">Auswählen</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Seriennummer -->
+            <div class="flex flex-col">
+              <label class="text-[10px] tracking-wider font-bold mb-1 uppercase text-stone-500">Seriennr./Label *</label>
+              <div class="relative image-slot bg-stone-100 border border-dashed border-stone-300 flex flex-col items-center justify-center cursor-pointer hover:bg-stone-200/50 hover:border-luxury-gold transition group">
+                <input type="file" required accept="image/png, image/jpeg, image/webp" onchange="previewImage(this, 'preview-serial')" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                <img id="preview-serial" class="hidden absolute inset-0 w-full h-full object-cover">
+                <div class="text-center p-2 pointer-events-none group-hover:scale-105 transition-transform">
+                  <svg class="w-6 h-6 mx-auto text-stone-400 group-hover:text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                  <span class="text-[8px] uppercase tracking-widest font-bold text-stone-400 block mt-1">Auswählen</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reißverschluss / Hardware -->
+            <div class="flex flex-col">
+              <label class="text-[10px] tracking-wider font-bold mb-1 uppercase text-stone-500">Hardware *</label>
+              <div class="relative image-slot bg-stone-100 border border-dashed border-stone-300 flex flex-col items-center justify-center cursor-pointer hover:bg-stone-200/50 hover:border-luxury-gold transition group">
+                <input type="file" required accept="image/png, image/jpeg, image/webp" onchange="previewImage(this, 'preview-zipper')" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                <img id="preview-zipper" class="hidden absolute inset-0 w-full h-full object-cover">
+                <div class="text-center p-2 pointer-events-none group-hover:scale-105 transition-transform">
+                  <svg class="w-6 h-6 mx-auto text-stone-400 group-hover:text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                  <span class="text-[8px] uppercase tracking-widest font-bold text-stone-400 block mt-1">Auswählen</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Nähte -->
+            <div class="flex flex-col">
+              <label class="text-[10px] tracking-wider font-bold mb-1 uppercase text-stone-500">Nähte *</label>
+              <div class="relative image-slot bg-stone-100 border border-dashed border-stone-300 flex flex-col items-center justify-center cursor-pointer hover:bg-stone-200/50 hover:border-luxury-gold transition group">
+                <input type="file" required accept="image/png, image/jpeg, image/webp" onchange="previewImage(this, 'preview-seams')" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                <img id="preview-seams" class="hidden absolute inset-0 w-full h-full object-cover">
+                <div class="text-center p-2 pointer-events-none group-hover:scale-105 transition-transform">
+                  <svg class="w-6 h-6 mx-auto text-stone-400 group-hover:text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                  <span class="text-[8px] uppercase tracking-widest font-bold text-stone-400 block mt-1">Auswählen</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ecken / Boden -->
+            <div class="flex flex-col">
+              <label class="text-[10px] tracking-wider font-bold mb-1 uppercase text-stone-500">Boden/Ecken *</label>
+              <div class="relative image-slot bg-stone-100 border border-dashed border-stone-300 flex flex-col items-center justify-center cursor-pointer hover:bg-stone-200/50 hover:border-luxury-gold transition group">
+                <input type="file" required accept="image/png, image/jpeg, image/webp" onchange="previewImage(this, 'preview-corners')" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                <img id="preview-corners" class="hidden absolute inset-0 w-full h-full object-cover">
+                <div class="text-center p-2 pointer-events-none group-hover:scale-105 transition-transform">
+                  <svg class="w-6 h-6 mx-auto text-stone-400 group-hover:text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                  <span class="text-[8px] uppercase tracking-widest font-bold text-stone-400 block mt-1">Auswählen</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Optional Slot: Accessories -->
+          <div class="pt-4 border-t border-stone-100">
+            <label class="block text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-2">Zubehör / Belege (Optional - Rechnung, Staubbeutel, Box, Karten)</label>
+            <div class="relative h-28 bg-stone-50 border border-dashed border-stone-200 flex flex-col items-center justify-center cursor-pointer hover:bg-stone-100/80 transition group">
+              <input type="file" accept="image/png, image/jpeg, image/webp" onchange="previewImage(this, 'preview-acc')" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+              <img id="preview-acc" class="hidden absolute inset-0 w-full h-full object-cover">
+              <div class="text-center p-4 pointer-events-none group-hover:scale-102 transition-transform">
+                <svg class="w-8 h-8 mx-auto text-stone-400 group-hover:text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <span class="text-[9px] uppercase tracking-widest font-bold text-stone-400 block mt-1">Zubehör-Foto hochladen (optional)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Submit -->
+        <div class="pt-6 border-t border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="text-xs text-stone-400 flex items-center space-x-2">
+            <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+            <span>Ihre Bilder werden sicher nach DSGVO verschlüsselt gespeichert.</span>
+          </div>
+
+          <button type="submit" class="w-full sm:w-auto bg-luxury-charcoal text-white hover:bg-luxury-gold hover:text-luxury-charcoal transition-all duration-300 text-xs tracking-widest uppercase font-bold px-10 py-4 shadow-md">
+            KI-Analyse jetzt starten
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <footer class="bg-white border-t border-stone-200 py-6 text-center text-xs text-stone-400">
+    <p>&copy; 2026 Laminimas.com. Alle Rechte vorbehalten.</p>
+  </footer>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    if (!token) {
+      alert('Token fehlt. Sie werden zur Startseite geleitet.');
+      window.location.href = '/index.html';
+    }
+
+    let customerEmail = '';
+
+    // Verify token on load
+    async function verifyAndLoad() {
+      try {
+        const res = await fetch(`/api/verify-token?token=${token}`);
+        const data = await res.json();
+
+        if (data.valid) {
+          customerEmail = data.email;
+          document.getElementById('brand').value = data.brand || '';
+          document.getElementById('model').value = data.model || '';
+          document.getElementById('header-token-status').innerText = `Verifiziert für: ${data.email}`;
+        } else {
+          alert('Fehler: ' + (data.error || 'Ungültiges Token. Bitte zahlen Sie zuerst.'));
+          window.location.href = data.paymentUrl || '/index.html';
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Fehler beim Abrufen der Bestelldaten.');
+      }
+    }
+
+    verifyAndLoad();
+
+    // Store base64 mapping
+    const fileBase64s = {};
+
+    // Helper to read file as base64 and preview it
+    function previewImage(input, previewId) {
+      const file = input.files[0];
+      if (!file) return;
+
+      // Limit size
+      if (file.size > 10 * 1024 * 1024) {
+        alert('Dieses Bild überschreitet das Limit von 10MB.');
+        input.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const previewImg = document.getElementById(previewId);
+        previewImg.src = e.target.result;
+        previewImg.classList.remove('hidden');
+        
+        // Save base64
+        const key = previewId.replace('preview-', '');
+        fileBase64s[key] = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Submit everything as JSON
+    async function submitAnalysis(event) {
+      event.preventDefault();
+
+      // Show spinner
+      document.getElementById('upload-overlay').classList.remove('hidden');
+
+      const brand = document.getElementById('brand').value;
+      const model = document.getElementById('model').value;
+      const source = document.getElementById('source').value;
+      const year = document.getElementById('year').value;
+      const condition = document.getElementById('condition').value;
+      const documents = document.getElementById('documents').value;
+
+      const payload = {
+        token: token,
+        brand: brand,
+        model: model,
+        email: customerEmail,
+        source: source,
+        year: year,
+        condition: condition,
+        documents: documents,
+        images: fileBase64s
+      };
+
+      try {
+        const res = await fetch('/api/upload-analysis', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          // Success! Redirect to loading/processing screen
+          window.location.href = `/loading.html?id=${data.id}`;
+        } else {
+          document.getElementById('upload-overlay').classList.add('hidden');
+          alert('Upload-Fehler: ' + (data.error || 'Unerwartetes Problem.'));
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById('upload-overlay').classList.add('hidden');
+        alert('Verbindungsproblem. Bitte überprüfen Sie Ihre Internetverbindung.');
+      }
+    }
+  </script>
+</body>
+</html>
