@@ -117,8 +117,15 @@
               <div class="absolute -top-3 -right-3 bg-luxury-gold text-white text-[10px] uppercase tracking-widest font-bold py-1 px-3">
                 Preishit
               </div>
-              <h3 class="font-serif text-2xl text-luxury-charcoal mb-4">Ersteinschätzung anfordern</h3>
-              <p class="text-xs text-stone-500 mb-6 font-light">Wählen Sie Ihre Marke und starten Sie die sichere Analyse.</p>
+              <h3 class="font-serif text-2xl text-luxury-charcoal mb-2">Ersteinschätzung anfordern</h3>
+              
+              <!-- Free testing notice -->
+              <div class="bg-amber-50 border border-luxury-gold/30 p-3 mb-5 text-[11px] text-luxury-bronze rounded-none">
+                <strong>💡 Kostenloser Test-Modus aktiv:</strong> 
+                Sie können die echte Bildanalyse und den PDF-Download im nächsten Schritt vollkommen gratis testen!
+              </div>
+
+              <p class="text-xs text-stone-500 mb-4 font-light">Wählen Sie Ihre Marke und starten Sie die sichere Analyse.</p>
               
               <form id="start-form" onsubmit="handleStartForm(event)" class="space-y-4">
                 <div>
@@ -151,16 +158,16 @@
 
                 <div class="pt-2 border-t border-stone-100 flex justify-between items-center text-sm">
                   <span class="text-stone-500">Service-Gebühr:</span>
-                  <span class="font-serif text-xl font-bold text-luxury-bronze">14,90 € <span class="text-xs text-stone-400 font-sans font-normal">inkl. MwSt.</span></span>
+                  <span class="font-serif text-xl font-bold text-luxury-bronze">14,90 € <span class="text-xs text-stone-400 font-sans font-normal text-line-through">Gratis-Test möglich</span></span>
                 </div>
 
                 <button type="submit" class="w-full bg-luxury-charcoal text-white hover:bg-luxury-gold hover:text-luxury-charcoal transition-all duration-300 text-xs tracking-widest uppercase font-bold py-4 rounded-none shadow-md">
-                  Check jetzt starten
+                  Weiter zum Upload & Test →
                 </button>
               </form>
 
               <div class="mt-4 flex items-center justify-center space-x-2 text-[10px] text-stone-400">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z\"></path></svg>
                 <span>Sichere SSL-Zahlung & DSGVO-konform</span>
               </div>
             </div>
@@ -186,7 +193,7 @@
             </div>
             <h3 class="font-serif text-lg font-medium text-luxury-charcoal">Zahlung abwickeln</h3>
             <p class="text-xs text-stone-500 leading-relaxed max-w-xs mx-auto">
-              Bezahlen Sie die Service-Gebühr von 14,90 € sicher und unkompliziert per Karte, PayPal oder über Ihren Shopify-Checkout.
+              Bezahlen Sie die Service-Gebühr von 14,90 € oder wählen Sie den kostenlosen Test-Modus (0,00 €), um die Bilderkennung zu testen.
             </p>
           </div>
 
@@ -283,7 +290,7 @@
           <h3 class="font-serif text-2xl text-luxury-charcoal">Designer-Taschencheck</h3>
           <div class="font-serif text-5xl font-bold text-luxury-charcoal my-4">
             14,90 €
-            <span class="text-xs font-sans font-normal text-stone-400 block mt-1">Einmalige Gebühr inkl. MwSt.</span>
+            <span class="text-xs font-sans font-normal text-stone-400 block mt-1">Einmalige Gebühr / Gratis-Testung möglich</span>
           </div>
           <ul class="text-xs text-stone-600 text-left space-y-3 max-w-xs mx-auto py-6 border-t border-b border-stone-200/80">
             <li class="flex items-center space-x-2">
@@ -304,7 +311,7 @@
             </li>
           </ul>
           <button onclick="startCheck()" class="w-full bg-luxury-charcoal text-white hover:bg-luxury-gold hover:text-luxury-charcoal transition duration-300 text-xs tracking-widest uppercase font-bold py-4 shadow">
-            Check jetzt buchen
+            Jetzt kostenlos oder bezahlt starten
           </button>
         </div>
       </div>
@@ -323,8 +330,7 @@
           <div class="bg-white p-6 border border-stone-100">
             <h4 class="font-serif text-base text-luxury-charcoal font-medium mb-2">Wie zuverlässig ist die KI-Ersteinschätzung?</h4>
             <p class="text-xs text-stone-500 leading-relaxed font-light">
-              Unsere KI wurde mit tausenden Bilddaten verifizierter Originale und Fälschungen trainiert. Sie erkennt minimale Abweichungen in Schriftart, Nahtwinkel und Materialstrukturen mit einer Genauigkeit von über 98%. Sie dient als hervorragende Ersteinschätzung vor dem Kauf oder Verkauf.
-            </p>
+              Unsere KI wurde mit tausenden Bilddaten verifizierter Originale und Fälschungen trainiert. Sie erkennt minimale Abweichungen in Schriftart, Nahtwinkel und Materialstrukturen mit einer Genauigkeit von über 98%. Sie dient als hervorragende Ersteinschätzung vor dem Kauf oder Verkauf.\n            </p>
           </div>
 
           <div class="bg-white p-6 border border-stone-100">
@@ -412,7 +418,7 @@
 
         const data = await response.json();
         if (data.success) {
-          // Redirect to payment simulation
+          // Redirect to payment simulation / test choice
           window.location.href = data.paymentUrl;
         } else {
           alert('Fehler: ' + (data.error || 'Unerwarteter Fehler aufgetreten.'));
