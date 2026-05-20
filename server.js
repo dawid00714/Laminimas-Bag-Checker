@@ -12,6 +12,20 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'laminimas2026';
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
 const PRICE_EUR = process.env.PRICE_EUR || '14.90';
 
+// Determine if we are running on Vercel
+const isVercel = process.env.VERCEL || process.env.NOW_REGION || __dirname.startsWith('/var/task');
+
+// Ensure uploads folder exists
+const UPLOADS_BASE = isVercel ? '/tmp' : __dirname;
+const UPLOADS_DIR = path.join(UPLOADS_BASE, 'uploads');
+if (!fs.existsSync(UPLOADS_DIR)) {
+  try {
+    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+  } catch (err) {
+    console.error('Error creating uploads directory:', err);
+  }
+}
+
 // Initialize the database
 db.getAll(); // creates db.json if not present
 
@@ -66,9 +80,7 @@ const server = http.createServer(async (req, res) => {
 
   console.log(`[${new Date().toISOString()}] ${method} ${pathname}`);
 
-  // ----------------------------------------------------
-  // API ENDPOINTS
-  // ----------------------------------------------------
+  // ----------------------------------------------------\n  // API ENDPOINTS\n  // ----------------------------------------------------
 
   // 1. Create Payment (Simulated or Stripe Checkout)
   if (pathname === '/api/create-payment' && method === 'POST') {
@@ -95,8 +107,6 @@ const server = http.createServer(async (req, res) => {
       // If Stripe is configured, we can create a real Stripe Checkout Session
       let stripeUrl = null;
       if (STRIPE_SECRET_KEY && STRIPE_SECRET_KEY !== 'placeholder_key') {
-        // Since we can't fetch external Stripe API in this sandbox (due to DNS blocks),
-        // we'll provide standard fallback code here. If Stripe errors out, we fallback to our beautiful simulation screen.
         try {
           // Stripe checkout logic can be integrated here for production
         } catch (e) {
@@ -105,8 +115,7 @@ const server = http.createServer(async (req, res) => {
       }
 
       const paymentUrl = `/payment.html?token=${token}`;
-      return sendJSON(res, {
-        success: true,
+      return sendJSON(res, {\n        success: true,
         token: token,
         paymentUrl: paymentUrl,
         price: PRICE_EUR
@@ -196,29 +205,46 @@ const server = http.createServer(async (req, res) => {
       }
 
       // Base64 Images processing
-      // We will save images as files to /uploads/ with a unique name
       const savedImages = {};
-      const imageMetadata = {};
 
       if (images && typeof images === 'object') {
         for (const imgKey in images) {
           const base64Data = images[imgKey];
           if (base64Data && base64Data.startsWith('data:image/')) {
-            // Extract file extension and base64 payload
-            const matches = base64Data.match(/^data:image\/([a-zA-Z+]+);base64,(.+)$/);
-            if (matches && matches.length === 3) {
-              const ext = matches[1] === 'jpeg' ? 'jpg' : matches[1];
-              const base64Payload = matches[2];
-              
-              // Validate size (limit ~10MB)
+            const matches = base64Data.match(/^data:image\\/([a-zA-Z+]+);base64,(.+)$/) || base64Data.match(/^data:image\\/jpeg;base64,(.+)$/) || base64Data.match(/^data:image\\/png;base64,(.+)$/) || base64Data.match(/^data:image\\/webp;base64,(.+)$/);
+            
+            // Safe fallback matcher
+            let ext = 'jpg';
+            let base64Payload = '';
+            
+            if (matches) {
+              if (matches.length === 3) {
+                ext = matches[1] === 'jpeg' ? 'jpg' : matches[1];
+                base64Payload = matches[2];
+              } else if (matches.length === 2) {
+                base64Payload = matches[1];
+              }
+            } else {
+              // Manual extraction if match fails
+              const parts = base64Data.split(';base64,');
+              if (parts.length === 2) {
+                base64Payload = parts[1];
+                const typePart = parts[0].split('image/');
+                if (typePart.length === 2) {
+                  ext = typePart[1] === 'jpeg' ? 'jpg' : typePart[1];
+                }
+              }
+            }
+
+            if (base64Payload) {
               const buffer = Buffer.from(base64Payload, 'base64');
               if (buffer.length > 10 * 1024 * 1024) {
-                return sendJSON(res, { error: `Bild "${imgKey}" überschreitet die 10MB Grenze.` }, 400);
+                return sendJSON(res, { error: `Bild \"${imgKey}\" überschreitet die 10MB Grenze.` }, 400);
               }
 
               const filename = `${record.id}_${imgKey}_${Date.now()}.${ext}`;
               const relativePath = `/uploads/${filename}`;
-              const fullPath = path.join(__dirname, relativePath);
+              const fullPath = path.join(isVercel ? '/tmp' : __dirname, relativePath);
 
               fs.writeFileSync(fullPath, buffer);
               savedImages[imgKey] = relativePath;
@@ -227,7 +253,7 @@ const server = http.createServer(async (req, res) => {
         }
       }
 
-      // Update database record with metadata & images and mark status "In Prüfung"
+      // Update database record with metadata & images and mark status \"In Prüfung\"
       db.update(record.id, {
         brand,
         model,
@@ -243,14 +269,8 @@ const server = http.createServer(async (req, res) => {
       });
 
       // Call AI Image analysis asynchronously
-      // Let's run it in background so the UI receives an instant upload success, 
-      // or block slightly if needed. Since we show a loading page, we can either
-      // poll or run it and return when finished. Let's start the analysis and save to DB
-      // when done. The loading page will poll for the status! This is an extremely elegant design!
-      
       ai.analyzeImages(brand, model, savedImages, { source, year, condition, documents })
         .then(aiResult => {
-          // Determine status based on result
           let status = 'Abgeschlossen';
           if (aiResult.result === 'unklar') {
             status = 'Manuelle Prüfung nötig';
@@ -264,7 +284,6 @@ const server = http.createServer(async (req, res) => {
         })
         .catch(err => {
           console.error(`Analysis failed for ${record.id}:`, err);
-          // Fallback static analysis if things crash completely
           db.update(record.id, {
             status: 'Manuelle Prüfung nötig',
             result: {
@@ -282,7 +301,6 @@ const server = http.createServer(async (req, res) => {
           });
         });
 
-      // Respond with ID so client can navigate to loading page and poll status
       return sendJSON(res, {
         success: true,
         id: record.id
@@ -305,7 +323,6 @@ const server = http.createServer(async (req, res) => {
       return sendJSON(res, { error: 'Anfrage nicht gefunden.' }, 404);
     }
 
-    // Return the report
     return sendJSON(res, record);
   }
 
@@ -333,7 +350,6 @@ const server = http.createServer(async (req, res) => {
         return sendJSON(res, { error: 'Nicht autorisiert.' }, 401);
       }
 
-      // Also run automatic GDPR cleanup check while here
       db.autoDeleteOldRecords(30);
 
       const records = db.getAll();
@@ -361,7 +377,6 @@ const server = http.createServer(async (req, res) => {
       if (status) updates.status = status;
       if (notes !== undefined) updates.notes = notes;
       
-      // Admin can manually adjust the AI result or risk score if manual review is needed!
       if (customResult && typeof customResult === 'object') {
         updates.result = {
           ...record.result,
@@ -387,12 +402,11 @@ const server = http.createServer(async (req, res) => {
 
       const record = db.getById(id);
       if (record) {
-        // Delete uploaded files
         if (record.images) {
           for (const key in record.images) {
             const imgPath = record.images[key];
             if (imgPath) {
-              const fullPath = path.join(__dirname, imgPath);
+              const fullPath = path.join(isVercel ? '/tmp' : __dirname, imgPath);
               if (fs.existsSync(fullPath)) {
                 try {
                   fs.unlinkSync(fullPath);
@@ -412,31 +426,23 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-  // ----------------------------------------------------
-  // STATIC FILE ROUTING
-  // ----------------------------------------------------
+  // ----------------------------------------------------\n  // STATIC FILE ROUTING\n  // ----------------------------------------------------
 
-  // Safe path validation to prevent Directory Traversal attacks
   let safePathname = pathname;
   if (safePathname === '/') safePathname = '/index.html';
 
-  // Prevent serving hidden files
   if (safePathname.includes('..') || safePathname.includes('/.')) {
     res.writeHead(403, { 'Content-Type': 'text/plain' });
     return res.end('Access Denied');
   }
 
-  // Let's resolve the file path:
-  // If it's `/uploads/...` then look inside `/laminimas-authenticator/uploads/`
-  // Else look inside `/laminimas-authenticator/public/`
   let filePath = '';
   if (safePathname.startsWith('/uploads/')) {
-    filePath = path.join(__dirname, safePathname);
+    filePath = path.join(isVercel ? '/tmp' : __dirname, safePathname);
   } else {
     filePath = path.join(__dirname, 'public', safePathname);
   }
 
-  // Check if file exists and serve it
   if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
     const ext = path.extname(filePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
@@ -445,7 +451,6 @@ const server = http.createServer(async (req, res) => {
     const stream = fs.createReadStream(filePath);
     stream.pipe(res);
   } else {
-    // If not found, serve index.html as a single page app router fallback or 404
     res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end('<h1>404 - Seite nicht gefunden</h1><p>Der gesuchte Inhalt existiert nicht oder wurde verschoben.</p>');
   }
