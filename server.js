@@ -80,7 +80,9 @@ const server = http.createServer(async (req, res) => {
 
   console.log(`[${new Date().toISOString()}] ${method} ${pathname}`);
 
-  // ----------------------------------------------------\n  // API ENDPOINTS\n  // ----------------------------------------------------
+  // ----------------------------------------------------
+  // API ENDPOINTS
+  // ----------------------------------------------------
 
   // 1. Create Payment (Simulated or Stripe Checkout)
   if (pathname === '/api/create-payment' && method === 'POST') {
@@ -115,7 +117,8 @@ const server = http.createServer(async (req, res) => {
       }
 
       const paymentUrl = `/payment.html?token=${token}`;
-      return sendJSON(res, {\n        success: true,
+      return sendJSON(res, {
+        success: true,
         token: token,
         paymentUrl: paymentUrl,
         price: PRICE_EUR
@@ -211,7 +214,7 @@ const server = http.createServer(async (req, res) => {
         for (const imgKey in images) {
           const base64Data = images[imgKey];
           if (base64Data && base64Data.startsWith('data:image/')) {
-            const matches = base64Data.match(/^data:image\\/([a-zA-Z+]+);base64,(.+)$/) || base64Data.match(/^data:image\\/jpeg;base64,(.+)$/) || base64Data.match(/^data:image\\/png;base64,(.+)$/) || base64Data.match(/^data:image\\/webp;base64,(.+)$/);
+            const matches = base64Data.match(/^data:image\/([a-zA-Z+]+);base64,(.+)$/) || base64Data.match(/^data:image\/jpeg;base64,(.+)$/) || base64Data.match(/^data:image\/png;base64,(.+)$/) || base64Data.match(/^data:image\/webp;base64,(.+)$/);
             
             // Safe fallback matcher
             let ext = 'jpg';
@@ -239,7 +242,7 @@ const server = http.createServer(async (req, res) => {
             if (base64Payload) {
               const buffer = Buffer.from(base64Payload, 'base64');
               if (buffer.length > 10 * 1024 * 1024) {
-                return sendJSON(res, { error: `Bild \"${imgKey}\" überschreitet die 10MB Grenze.` }, 400);
+                return sendJSON(res, { error: `Bild "${imgKey}" überschreitet die 10MB Grenze.` }, 400);
               }
 
               const filename = `${record.id}_${imgKey}_${Date.now()}.${ext}`;
@@ -253,7 +256,7 @@ const server = http.createServer(async (req, res) => {
         }
       }
 
-      // Update database record with metadata & images and mark status \"In Prüfung\"
+      // Update database record with metadata & images and mark status "In Prüfung"
       db.update(record.id, {
         brand,
         model,
@@ -426,7 +429,9 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-  // ----------------------------------------------------\n  // STATIC FILE ROUTING\n  // ----------------------------------------------------
+  // ----------------------------------------------------
+  // STATIC FILE ROUTING
+  // ----------------------------------------------------
 
   let safePathname = pathname;
   if (safePathname === '/') safePathname = '/index.html';
